@@ -194,199 +194,130 @@ export const DashboardUser = ({ onAddToCart, onNavigate }) => {
       )}
 
       {/* =========================================================
-          1. HERO SECTION (CLEAN HEALTH PHARMACY)
+          1. STORE HERO BANNER (CLEAN & PROFESSIONAL APOTEK HADINATA)
           ========================================================= */}
-      <div className="pharmacy-hero-wrapper">
-        <div className="pharmacy-hero-content">
-          <div className="hero-pill-badge">
+      <div className="pharmacy-store-banner">
+        <div className="pharmacy-store-header">
+          <div className="store-status-pill">
+            <span className="status-indicator-dot"></span>
+            <span>Apotek Buka • 07.00 - 22.00 WIB</span>
+          </div>
+          <span className="store-sipa-badge">
             <ShieldCheck size={14} color="var(--color-primary)" />
-            <span>Apotek Hadinata • Farmasi Terpercaya & Berizin Resmi</span>
-          </div>
-
-          <h1 className="pharmacy-hero-title">
-            Healthy Tablets, Vitamins & Medicine
-          </h1>
-
-          <p className="pharmacy-hero-subtitle">
-            Penuhi kebutuhan obat harian keluarga dengan jaminan keaslian BPOM, seleksi kedaluwarsa sistem <strong>FEFO</strong>, dan pengantaran kurir langsung ke rumah Anda.
-          </p>
-
-          {/* Clean Unified Search Bar */}
-          <form className="mega-search-bar" onSubmit={handleSearchSubmit}>
-            <select 
-              className="mega-category-select"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="">Semua Kategori</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-
-            <div className="mega-search-divider"></div>
-
-            <input 
-              type="text"
-              className="mega-search-input"
-              placeholder="Cari obat, vitamin, keluhan sakit..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-
-            <button type="submit" className="mega-search-btn">
-              <Search size={16} />
-              <span>Cari Obat</span>
-            </button>
-          </form>
-
-          {/* Subtle trust checklist */}
-          <div style={{ display: "flex", justifyContent: "center", gap: "28px", marginTop: "24px", flexWrap: "wrap", fontSize: "0.85rem", color: "#64748b" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <CheckCircle2 size={15} color="var(--color-primary)" />
-              <span>100% Asli & Resmi BPOM</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <CheckCircle2 size={15} color="var(--color-primary)" />
-              <span>Pengantaran Kurir Same-Day</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <CheckCircle2 size={15} color="var(--color-primary)" />
-              <span>Kontrol Kedaluwarsa FEFO</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* =========================================================
-          2. FOUR PROMO HIGHLIGHT BANNERS (CLEAN E-COMMERCE CARDS)
-          ========================================================= */}
-      <div className="bento-grid">
-        {/* Banner 1: Analgesik / Flu */}
-        <div 
-          className="bento-card bento-blue"
-          onClick={() => {
-            const cat = categories.find(c => c.name.toLowerCase().includes("analgesik") || c.name.toLowerCase().includes("flu"));
-            if (cat) setSelectedCategory(cat.id.toString());
-            document.getElementById("catalog-products-section")?.scrollIntoView({ behavior: "smooth" });
-          }}
-        >
-          <div>
-            <div className="bento-icon">
-              <Pill size={22} />
-            </div>
-            <h3 className="bento-title">Obat Bebas & Flu</h3>
-            <p className="bento-desc">Pereda demam, pusing, batuk, dan flu tanpa resep dokter.</p>
-          </div>
-          <span className="bento-link">
-            Buka Katalog <ArrowRight size={14} />
+            SIPA: 446/SIPA-120/2024
           </span>
         </div>
 
-        {/* Banner 2: Vitamin & Imun */}
-        <div 
-          className="bento-card bento-amber"
-          onClick={() => {
-            const cat = categories.find(c => c.name.toLowerCase().includes("vitamin"));
-            if (cat) setSelectedCategory(cat.id.toString());
-            document.getElementById("catalog-products-section")?.scrollIntoView({ behavior: "smooth" });
-          }}
-        >
-          <div>
-            <div className="bento-icon">
-              <Sparkles size={22} />
-            </div>
-            <h3 className="bento-title">Vitamin & Suplemen</h3>
-            <p className="bento-desc">Suplemen harian untuk menjaga imunitas dan energi tubuh.</p>
-          </div>
-          <span className="bento-link">
-            Buka Katalog <ArrowRight size={14} />
-          </span>
-        </div>
-
-        {/* Banner 3: Pencernaan */}
-        <div 
-          className="bento-card bento-emerald"
-          onClick={() => {
-            const cat = categories.find(c => c.name.toLowerCase().includes("pencernaan") || c.name.toLowerCase().includes("antasida"));
-            if (cat) setSelectedCategory(cat.id.toString());
-            document.getElementById("catalog-products-section")?.scrollIntoView({ behavior: "smooth" });
-          }}
-        >
-          <div>
-            <div className="bento-icon">
-              <HeartPulse size={22} />
-            </div>
-            <h3 className="bento-title">Pencernaan & Maag</h3>
-            <p className="bento-desc">Pertolongan cepat untuk asam lambung, begah dan perut kembung.</p>
-          </div>
-          <span className="bento-link">
-            Buka Katalog <ArrowRight size={14} />
-          </span>
-        </div>
-
-        {/* Banner 4: Konsultasi */}
-        <div 
-          className="bento-card bento-purple"
-          onClick={() => onNavigate("chat")}
-        >
-          <div>
-            <div className="bento-icon">
-              <MessageSquare size={22} />
-            </div>
-            <h3 className="bento-title">Tanya Apoteker</h3>
-            <p className="bento-desc">Konsultasikan aturan minum dan dosis obat langsung dengan apoteker.</p>
-          </div>
-          <span className="bento-link">
-            Mulai Chat <ArrowRight size={14} />
-          </span>
-        </div>
-      </div>
-
-      {/* =========================================================
-          3. CATEGORIES FILTER (CLEAN TABS & PILLS)
-          ========================================================= */}
-      <section className="categories-section">
-        <h2 className="categories-section-title">Kategori Pilihan</h2>
-        <p className="categories-section-subtitle">
-          Pilih kategori untuk memfilter obat sesuai kebutuhan kesehatan Anda
+        <h1 className="pharmacy-store-title">
+          Apotek Hadinata
+        </h1>
+        <p className="pharmacy-store-subtitle">
+          Penyedia Obat Bebas, Resep Dokter & Suplemen Kesehatan Terpercaya dengan Jaminan Mutu FEFO & Pengantaran Kurir Cepat.
         </p>
 
-        <div className="category-circles-grid">
-          {/* Semua Kategori */}
+        {/* Clean Integrated Search Bar */}
+        <form className="mega-search-bar" onSubmit={handleSearchSubmit}>
+          <select 
+            className="mega-category-select"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="">Semua Kategori</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+
+          <div className="mega-search-divider"></div>
+
+          <input 
+            type="text"
+            className="mega-search-input"
+            placeholder="Cari nama obat (contoh: Paracetamol, Promag, Vitamin C)..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+
+          <button type="submit" className="mega-search-btn">
+            <Search size={16} />
+            <span>Cari Obat</span>
+          </button>
+        </form>
+
+        {/* Compact Trust Strip (1-Row, Native E-commerce Style) */}
+        <div className="store-trust-strip">
+          <div className="trust-strip-item">
+            <ShieldCheck size={20} className="trust-icon" />
+            <div>
+              <strong>100% Asli BPOM</strong>
+              <p>Distributor farmasi resmi</p>
+            </div>
+          </div>
+          <div className="trust-strip-divider"></div>
+          <div className="trust-strip-item">
+            <Truck size={20} className="trust-icon" />
+            <div>
+              <strong>Pengiriman Kilat</strong>
+              <p>Kurir apotek langsung ke rumah</p>
+            </div>
+          </div>
+          <div className="trust-strip-divider"></div>
+          <div className="trust-strip-item">
+            <Clock size={20} className="trust-icon" />
+            <div>
+              <strong>Kontrol Mutu FEFO</strong>
+              <p>Kedaluwarsa selalu dipantau</p>
+            </div>
+          </div>
+          <div className="trust-strip-divider"></div>
+          <div className="trust-strip-item trust-clickable" onClick={() => onNavigate("chat")} title="Klik untuk konsultasi dengan apoteker">
+            <MessageSquare size={20} className="trust-icon" />
+            <div>
+              <strong>Tanya Apoteker</strong>
+              <p>Konsultasi dosis & aturan minum</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* =========================================================
+          2. CATEGORY FILTER CHIPS (CLEAN E-COMMERCE PILLS)
+          ========================================================= */}
+      <section className="category-chips-section">
+        <div className="category-chips-header">
+          <div>
+            <h2 className="category-chips-title">Kategori Obat</h2>
+            <p className="category-chips-subtitle">Pilih kelompok obat untuk menyaring katalog produk</p>
+          </div>
+          {selectedCategory && (
+            <button 
+              className="btn btn-secondary btn-sm"
+              onClick={() => setSelectedCategory("")}
+            >
+              Tampilkan Semua Produk
+            </button>
+          )}
+        </div>
+
+        <div className="category-chips-container">
           <button 
-            className={`category-circle-item ${selectedCategory === "" ? "active" : ""}`}
+            className={`category-chip ${selectedCategory === "" ? "active" : ""}`}
             onClick={() => setSelectedCategory("")}
           >
-            <div className="category-circle-box">
-              <Layers size={22} />
-            </div>
-            <span className="category-circle-label">Semua Obat</span>
+            Semua Produk
           </button>
 
-          {/* Dynamic Categories */}
-          {categories.map((c) => {
-            const n = c.name.toLowerCase();
-            let CatIcon = Pill;
-            if (n.includes("vitamin")) CatIcon = Sparkles;
-            else if (n.includes("pencernaan") || n.includes("antasida")) CatIcon = HeartPulse;
-            else if (n.includes("flu") || n.includes("batuk")) CatIcon = Activity;
-
-            return (
-              <button 
-                key={c.id}
-                className={`category-circle-item ${selectedCategory === c.id.toString() ? "active" : ""}`}
-                onClick={() => setSelectedCategory(selectedCategory === c.id.toString() ? "" : c.id.toString())}
-              >
-                <div className="category-circle-box">
-                  <CatIcon size={22} />
-                </div>
-                <span className="category-circle-label">{c.name}</span>
-              </button>
-            );
-          })}
+          {categories.map((c) => (
+            <button 
+              key={c.id}
+              className={`category-chip ${selectedCategory === c.id.toString() ? "active" : ""}`}
+              onClick={() => setSelectedCategory(selectedCategory === c.id.toString() ? "" : c.id.toString())}
+            >
+              {c.name}
+            </button>
+          ))}
         </div>
       </section>
 

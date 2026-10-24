@@ -792,62 +792,7 @@ button, input, select, textarea {
    MODERN PHARMACY LANDING PAGE (PINTEREST STYLE)
    ========================================================= */
 
-/* Hero Container */
-.pharmacy-hero-wrapper {
-  background: linear-gradient(180deg, #e0f2fe 0%, #ecfdf5 55%, #ffffff 100%);
-  border-radius: var(--radius-xl);
-  padding: 44px 32px 52px;
-  margin-bottom: 32px;
-  border: 1px solid rgba(186, 230, 253, 0.4);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(186, 230, 253, 0.25);
-}
-
-.pharmacy-hero-content {
-  max-width: 780px;
-  margin: 0 auto;
-  text-align: center;
-  position: relative;
-  z-index: 2;
-}
-
-.hero-pill-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: white;
-  border: 1px solid rgba(5, 150, 105, 0.2);
-  color: var(--color-primary);
-  font-weight: 700;
-  font-size: 0.8rem;
-  padding: 6px 16px;
-  border-radius: 999px;
-  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.08);
-  margin-bottom: 16px;
-  letter-spacing: 0.02em;
-}
-
-.pharmacy-hero-title {
-  font-size: 2.75rem;
-  font-weight: 800;
-  color: #0f172a;
-  letter-spacing: -0.025em;
-  line-height: 1.15;
-  margin-bottom: 14px;
-}
-
-.pharmacy-hero-subtitle {
-  font-size: 1.05rem;
-  color: #475569;
-  line-height: 1.6;
-  margin-bottom: 28px;
-  max-width: 640px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Floating Mega Search Bar */
+/* Mega Search Bar */
 .mega-search-bar {
   background: white;
   border: 1px solid var(--color-border);
@@ -921,26 +866,149 @@ button, input, select, textarea {
   box-shadow: 0 6px 18px rgba(5, 150, 105, 0.4);
 }
 
-/* 4 Bento Feature Highlights */
-.bento-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-  margin-bottom: 40px;
+/* =========================================================
+   AUTHENTIC PHARMACY STORE BANNER & TRUST STRIP
+   ========================================================= */
+
+.pharmacy-store-banner {
+  background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%);
+  border-radius: var(--radius-xl);
+  padding: 36px 32px 32px;
+  margin-bottom: 32px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+  position: relative;
 }
 
-@media (max-width: 1024px) {
-  .bento-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.pharmacy-store-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
 }
 
-@media (max-width: 640px) {
-  .bento-grid {
-    grid-template-columns: 1fr;
+.store-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.status-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+  display: inline-block;
+}
+
+.store-sipa-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.pharmacy-store-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  text-align: center;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.pharmacy-store-subtitle {
+  font-size: 0.975rem;
+  color: #475569;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 24px;
+  line-height: 1.55;
+}
+
+/* Compact Trust Strip (1-Row, Native E-commerce Style) */
+.store-trust-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-lg);
+  padding: 16px 24px;
+  margin-top: 28px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.trust-strip-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 180px;
+}
+
+.trust-strip-item strong {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.trust-strip-item p {
+  margin: 0;
+  font-size: 0.775rem;
+  color: #64748b;
+}
+
+.trust-icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.trust-strip-divider {
+  width: 1px;
+  height: 32px;
+  background: #e2e8f0;
+}
+
+.trust-clickable {
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.trust-clickable:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .store-trust-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
   }
-  .pharmacy-hero-title {
-    font-size: 2rem;
+  .trust-strip-divider {
+    display: none;
+  }
+  .pharmacy-store-title {
+    font-size: 1.75rem;
   }
   .mega-search-bar {
     flex-direction: column;
@@ -960,169 +1028,69 @@ button, input, select, textarea {
   }
 }
 
-.bento-card {
-  border-radius: var(--radius-lg);
-  padding: 22px 20px;
-  border: 1px solid transparent;
-  transition: all var(--transition-normal);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  text-decoration: none;
-}
+/* =========================================================
+   CATEGORY FILTER CHIPS (CLEAN PILLS)
+   ========================================================= */
 
-.bento-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-}
-
-.pharmacy-hero-wrapper {
-  background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%);
-  border-radius: var(--radius-xl);
-  padding: 40px 32px 48px;
+.category-chips-section {
   margin-bottom: 32px;
-  border: 1px solid #e2e8f0;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
 }
 
-.bento-card {
-  background: #ffffff;
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  border: 1px solid #e2e8f0;
-  transition: all var(--transition-normal);
-  cursor: pointer;
+.category-chips-header {
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
-  text-decoration: none;
-  box-shadow: var(--shadow-xs);
+  align-items: flex-end;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.bento-card:hover {
-  transform: translateY(-2px);
-  border-color: #cbd5e1;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+.category-chips-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 2px;
 }
 
-.bento-blue .bento-icon { background: #eff6ff; color: #0284c7; }
-.bento-amber .bento-icon { background: #fff7ed; color: #ea580c; }
-.bento-emerald .bento-icon { background: #f0fdf4; color: #16a34a; }
-.bento-purple .bento-icon { background: #f0fdfa; color: #0f766e; }
-
-.bento-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-}
-
-.bento-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--color-text-main);
-  margin-bottom: 4px;
-}
-
-.bento-desc {
-  font-size: 0.825rem;
+.category-chips-subtitle {
+  font-size: 0.85rem;
   color: var(--color-text-muted);
-  line-height: 1.45;
-  margin-bottom: 12px;
 }
 
-.bento-link {
-  font-size: 0.825rem;
-  font-weight: 700;
+.category-chips-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.category-chip {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  color: #334155;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--color-primary);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
 }
 
-/* Category Circles */
-.categories-section {
-  margin-bottom: 40px;
-  text-align: center;
-}
-
-.categories-section-title {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin-bottom: 6px;
-}
-
-.categories-section-subtitle {
-  color: var(--color-text-muted);
-  font-size: 0.95rem;
-  margin-bottom: 24px;
-}
-
-.category-circles-grid {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
-  padding: 4px;
-}
-
-.category-circle-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  width: 100px;
-}
-
-.category-circle-box {
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  background: white;
-  border: 1.5px solid var(--color-border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
-  transition: all var(--transition-normal);
-  color: var(--color-text-main);
-}
-
-.category-circle-item:hover .category-circle-box {
-  transform: translateY(-4px) scale(1.05);
+.category-chip:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
-  box-shadow: 0 8px 18px rgba(5, 150, 105, 0.15);
+  background: #f0fdfa;
 }
 
-.category-circle-item.active .category-circle-box {
-  background: var(--color-primary-light);
+.category-chip.active {
+  background: var(--color-primary);
   border-color: var(--color-primary);
-  color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
-}
-
-.category-circle-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--color-text-main);
-  text-align: center;
-  line-height: 1.25;
-}
-
-.category-circle-item.active .category-circle-label {
-  color: var(--color-primary);
-  font-weight: 700;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
 }
 
 /* Modern Product Card */
