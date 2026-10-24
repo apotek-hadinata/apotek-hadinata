@@ -460,24 +460,24 @@ export const DashboardUser = ({ onAddToCart, onNavigate }) => {
       <div 
         className="card" 
         style={{ 
-          marginTop: "48px", 
+          marginTop: "40px", 
           background: "linear-gradient(135deg, #0f766e 0%, #115e59 100%)", 
           color: "white", 
-          borderRadius: "var(--radius-xl)",
-          padding: "36px 32px",
+          borderRadius: "var(--radius-lg)",
+          padding: "28px 24px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           flexWrap: "wrap",
-          gap: "24px",
-          boxShadow: "0 12px 30px rgba(15, 23, 42, 0.12)"
+          gap: "20px",
+          boxShadow: "var(--shadow-sm)"
         }}
       >
         <div style={{ maxWidth: "620px" }}>
           <span style={{ 
             background: "rgba(255, 255, 255, 0.18)", 
-            padding: "4px 12px", 
-            borderRadius: "999px", 
+            padding: "3px 8px", 
+            borderRadius: "var(--radius-xs)", 
             fontSize: "0.75rem", 
             fontWeight: 700, 
             letterSpacing: "0.04em",
@@ -485,10 +485,10 @@ export const DashboardUser = ({ onAddToCart, onNavigate }) => {
           }}>
             Layanan Apoteker
           </span>
-          <h2 style={{ color: "white", fontSize: "1.7rem", marginTop: "10px", marginBottom: "8px" }}>
+          <h2 style={{ color: "white", fontSize: "1.45rem", marginTop: "8px", marginBottom: "6px" }}>
             Butuh Rekomendasi atau Aturan Minum Obat?
           </h2>
-          <p style={{ color: "rgba(255, 255, 255, 0.9)", fontSize: "0.95rem", lineHeight: "1.6" }}>
+          <p style={{ color: "rgba(255, 255, 255, 0.9)", fontSize: "0.9rem", lineHeight: "1.5" }}>
             Apoteker berlisensi Apotek Hadinata siap membantu Anda via Live Chat untuk memastikan pemilihan obat yang tepat, aman, dan rasional.
           </p>
         </div>
@@ -499,13 +499,14 @@ export const DashboardUser = ({ onAddToCart, onNavigate }) => {
             background: "white", 
             color: "#0f766e", 
             fontWeight: 700, 
-            padding: "14px 28px", 
-            fontSize: "0.95rem",
-            boxShadow: "0 4px 14px rgba(0,0,0,0.12)"
+            padding: "10px 20px", 
+            borderRadius: "var(--radius-md)",
+            fontSize: "0.9rem",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.12)"
           }}
           onClick={() => onNavigate("chat")}
         >
-          <MessageSquare size={17} />
+          <MessageSquare size={16} />
           Konsultasi Apoteker
         </button>
       </div>
