@@ -50,127 +50,187 @@ export const Navbar = ({ currentTab, onSelectTab, cartCount = 0 }) => {
           </div>
         </div>
 
-        {/* Dynamic Navigation Links */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        {/* Dynamic Navigation Links (Icon-Only with Tooltips on Hover) */}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           {isAuthenticated ? (
             <>
               {/* Role: USER (PELANGGAN) */}
               {role === "user" && (
-                <>
-                  <button 
-                    className={`btn btn-sm ${currentTab === "catalog" ? "btn-primary" : "btn-secondary"}`}
-                    onClick={() => onSelectTab("catalog")}
-                  >
-                    <Pill size={15} /> Katalog Obat
-                  </button>
-                  <button 
-                    className={`btn btn-sm ${currentTab === "cart" ? "btn-primary" : "btn-secondary"}`}
-                    onClick={() => onSelectTab("cart")}
-                    style={{ position: "relative" }}
-                  >
-                    <ShoppingCart size={15} /> Keranjang
-                    {cartCount > 0 && (
-                      <span style={{
-                        position: "absolute",
-                        top: "-5px",
-                        right: "-5px",
-                        background: "var(--color-danger)",
-                        color: "white",
-                        fontSize: "0.65rem",
-                        padding: "2px 6px",
-                        borderRadius: "999px",
-                        fontWeight: "700"
-                      }}>
-                        {cartCount}
-                      </span>
-                    )}
-                  </button>
-                  <button 
-                    className={`btn btn-sm ${currentTab === "orders" ? "btn-primary" : "btn-secondary"}`}
-                    onClick={() => onSelectTab("orders")}
-                  >
-                    <Package size={15} /> Pesanan Saya
-                  </button>
-                  <button 
-                    className={`btn btn-sm ${currentTab === "chat" ? "btn-primary" : "btn-secondary"}`}
-                    onClick={() => onSelectTab("chat")}
-                  >
-                    <MessageSquare size={15} /> Chat CS
-                  </button>
-                </>
+                <div className="nav-actions-group">
+                  <div className="nav-item-wrapper">
+                    <button 
+                      className={`nav-icon-btn ${currentTab === "catalog" ? "active" : ""}`}
+                      onClick={() => onSelectTab("catalog")}
+                      aria-label="Katalog Obat"
+                      title="Katalog Obat"
+                    >
+                      <Pill size={18} />
+                    </button>
+                    <div className="nav-tooltip">Katalog Obat</div>
+                  </div>
+
+                  <div className="nav-item-wrapper">
+                    <button 
+                      className={`nav-icon-btn ${currentTab === "cart" ? "active" : ""}`}
+                      onClick={() => onSelectTab("cart")}
+                      aria-label="Keranjang Belanja"
+                      title="Keranjang Belanja"
+                    >
+                      <ShoppingCart size={18} />
+                      {cartCount > 0 && (
+                        <span className="nav-cart-badge">
+                          {cartCount}
+                        </span>
+                      )}
+                    </button>
+                    <div className="nav-tooltip">
+                      Keranjang Belanja {cartCount > 0 ? `(${cartCount})` : ""}
+                    </div>
+                  </div>
+
+                  <div className="nav-item-wrapper">
+                    <button 
+                      className={`nav-icon-btn ${currentTab === "orders" ? "active" : ""}`}
+                      onClick={() => onSelectTab("orders")}
+                      aria-label="Pesanan Saya"
+                      title="Pesanan Saya"
+                    >
+                      <Package size={18} />
+                    </button>
+                    <div className="nav-tooltip">Pesanan Saya</div>
+                  </div>
+
+                  <div className="nav-item-wrapper">
+                    <button 
+                      className={`nav-icon-btn ${currentTab === "chat" ? "active" : ""}`}
+                      onClick={() => onSelectTab("chat")}
+                      aria-label="Chat Apoteker / CS"
+                      title="Chat Apoteker / CS"
+                    >
+                      <MessageSquare size={18} />
+                    </button>
+                    <div className="nav-tooltip">Chat Apoteker / CS</div>
+                  </div>
+                </div>
               )}
 
               {/* Role: ADMIN */}
               {role === "admin" && (
-                <>
-                  <button 
-                    className={`btn btn-sm ${currentTab === "admin_dashboard" ? "btn-primary" : "btn-secondary"}`}
-                    onClick={() => onSelectTab("admin_dashboard")}
-                  >
-                    <LayoutDashboard size={15} /> Dashboard
-                  </button>
-                  <button 
-                    className={`btn btn-sm ${currentTab === "admin_medicines" ? "btn-primary" : "btn-secondary"}`}
-                    onClick={() => onSelectTab("admin_medicines")}
-                  >
-                    <Layers size={15} /> Obat & Batch FEFO
-                  </button>
-                  <button 
-                    className={`btn btn-sm ${currentTab === "admin_orders" ? "btn-primary" : "btn-secondary"}`}
-                    onClick={() => onSelectTab("admin_orders")}
-                  >
-                    <Package size={15} /> ACC Pesanan
-                  </button>
-                  <button 
-                    className={`btn btn-sm ${currentTab === "admin_chats" ? "btn-primary" : "btn-secondary"}`}
-                    onClick={() => onSelectTab("admin_chats")}
-                  >
-                    <MessageSquare size={15} /> Chat Pelanggan
-                  </button>
-                </>
+                <div className="nav-actions-group">
+                  <div className="nav-item-wrapper">
+                    <button 
+                      className={`nav-icon-btn ${currentTab === "admin_dashboard" ? "active" : ""}`}
+                      onClick={() => onSelectTab("admin_dashboard")}
+                      aria-label="Dashboard Utama"
+                    >
+                      <LayoutDashboard size={18} />
+                    </button>
+                    <div className="nav-tooltip">Dashboard Utama</div>
+                  </div>
+
+                  <div className="nav-item-wrapper">
+                    <button 
+                      className={`nav-icon-btn ${currentTab === "admin_medicines" ? "active" : ""}`}
+                      onClick={() => onSelectTab("admin_medicines")}
+                      aria-label="Kelola Obat & Batch FEFO"
+                    >
+                      <Layers size={18} />
+                    </button>
+                    <div className="nav-tooltip">Kelola Obat & Batch FEFO</div>
+                  </div>
+
+                  <div className="nav-item-wrapper">
+                    <button 
+                      className={`nav-icon-btn ${currentTab === "admin_orders" ? "active" : ""}`}
+                      onClick={() => onSelectTab("admin_orders")}
+                      aria-label="Validasi Pesanan Masuk"
+                    >
+                      <Package size={18} />
+                    </button>
+                    <div className="nav-tooltip">Validasi Pesanan Masuk</div>
+                  </div>
+
+                  <div className="nav-item-wrapper">
+                    <button 
+                      className={`nav-icon-btn ${currentTab === "admin_chats" ? "active" : ""}`}
+                      onClick={() => onSelectTab("admin_chats")}
+                      aria-label="Live Chat Pelanggan"
+                    >
+                      <MessageSquare size={18} />
+                    </button>
+                    <div className="nav-tooltip">Live Chat Pelanggan</div>
+                  </div>
+                </div>
               )}
 
               {/* Role: KURIR */}
               {role === "kurir" && (
-                <>
-                  <button 
-                    className={`btn btn-sm ${currentTab === "courier_jobs" ? "btn-primary" : "btn-secondary"}`}
-                    onClick={() => onSelectTab("courier_jobs")}
-                  >
-                    <Truck size={15} /> Tugas Siap Antar
-                  </button>
-                  <button 
-                    className={`btn btn-sm ${currentTab === "courier_active" ? "btn-primary" : "btn-secondary"}`}
-                    onClick={() => onSelectTab("courier_active")}
-                  >
-                    <Package size={15} /> Riwayat Pengantaran
-                  </button>
-                </>
+                <div className="nav-actions-group">
+                  <div className="nav-item-wrapper">
+                    <button 
+                      className={`nav-icon-btn ${currentTab === "courier_jobs" ? "active" : ""}`}
+                      onClick={() => onSelectTab("courier_jobs")}
+                      aria-label="Tugas Siap Antar"
+                    >
+                      <Truck size={18} />
+                    </button>
+                    <div className="nav-tooltip">Tugas Siap Antar</div>
+                  </div>
+
+                  <div className="nav-item-wrapper">
+                    <button 
+                      className={`nav-icon-btn ${currentTab === "courier_active" ? "active" : ""}`}
+                      onClick={() => onSelectTab("courier_active")}
+                      aria-label="Riwayat Pengantaran"
+                    >
+                      <Package size={18} />
+                    </button>
+                    <div className="nav-tooltip">Riwayat Pengantaran</div>
+                  </div>
+                </div>
               )}
 
-              {/* User Profile Pill & Logout */}
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginLeft: "8px", borderLeft: "1px solid var(--color-border)", paddingLeft: "12px" }}>
-                {getRoleBadge()}
-                <span style={{ fontSize: "0.85rem", fontWeight: "600", color: "var(--color-text-main)" }}>
-                  {user?.name?.split(" ")[0] || "User"}
-                </span>
-                <button 
-                  className="btn btn-sm btn-secondary" 
-                  onClick={logout}
-                  title="Keluar dari akun"
-                  style={{ padding: "6px 8px" }}
-                >
-                  <LogOut size={14} color="#ef4444" />
-                </button>
+              {/* User Profile & Logout with Tooltip */}
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginLeft: "6px", borderLeft: "1px solid var(--color-border)", paddingLeft: "12px" }}>
+                <div className="nav-item-wrapper">
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "default" }}>
+                    {getRoleBadge()}
+                    <span style={{ fontSize: "0.85rem", fontWeight: "600", color: "var(--color-text-main)" }}>
+                      {user?.name?.split(" ")[0] || "User"}
+                    </span>
+                  </div>
+                  <div className="nav-tooltip">
+                    {user?.name} ({role})
+                  </div>
+                </div>
+
+                <div className="nav-item-wrapper">
+                  <button 
+                    className="nav-icon-btn" 
+                    onClick={logout}
+                    aria-label="Keluar dari Akun"
+                    style={{ width: "34px", height: "34px" }}
+                  >
+                    <LogOut size={15} color="#ef4444" />
+                  </button>
+                  <div className="nav-tooltip tooltip-right">
+                    Keluar dari Akun
+                  </div>
+                </div>
               </div>
             </>
           ) : (
-            <button 
-              className="btn btn-sm btn-primary"
-              onClick={() => onSelectTab("auth")}
-            >
-              <User size={15} /> Masuk / Daftar
-            </button>
+            <div className="nav-item-wrapper">
+              <button 
+                className="btn btn-sm btn-primary"
+                onClick={() => onSelectTab("auth")}
+              >
+                <User size={15} /> Masuk / Daftar
+              </button>
+              <div className="nav-tooltip tooltip-right">
+                Masuk ke Akun
+              </div>
+            </div>
           )}
         </div>
       </div>
