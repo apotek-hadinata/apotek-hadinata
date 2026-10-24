@@ -19,8 +19,211 @@ import {
   HeartPulse,
   Activity,
   Layers,
-  Sparkles
+  Sparkles,
+  Star,
+  Sun,
+  Flower2,
+  Hexagon,
+  Shield,
+  Heart,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
+
+// =========================================================
+// REALISTIC REFERENCE ILLUSTRATIONS & MOCKUPS
+// =========================================================
+
+// Hero Left Floating Medical Decoration (Blister & Dropper)
+const HeroLeftDecoration = () => (
+  <div className="ref-hero-decor-left">
+    <svg viewBox="0 0 160 180" width="150" height="170" opacity="0.9" style={{ filter: "drop-shadow(0 10px 20px rgba(2,132,199,0.15))" }}>
+      {/* Blue Capsule Blister Pack */}
+      <rect x="15" y="15" width="95" height="120" rx="8" fill="#ffffff" stroke="#bae6fd" strokeWidth="2" />
+      <rect x="18" y="18" width="89" height="14" rx="3" fill="#0284c7" />
+      {/* Capsules */}
+      {[0, 1, 2].map(r => (
+        [0, 1].map(c => (
+          <g key={`${r}-${c}`} transform={`translate(${30 + c * 38}, ${45 + r * 30})`}>
+            <rect x="0" y="0" width="22" height="10" rx="5" fill="#38bdf8" />
+            <rect x="0" y="0" width="11" height="10" rx="5" fill="#0284c7" />
+          </g>
+        ))
+      ))}
+      {/* Blue Dropper Bottle standing next to it */}
+      <rect x="85" y="80" width="28" height="55" rx="6" fill="#0369a1" />
+      <rect x="92" y="68" width="14" height="13" rx="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
+      <rect x="96" y="58" width="6" height="11" rx="2" fill="#38bdf8" />
+      <rect x="87" y="96" width="24" height="24" rx="2" fill="#ffffff" />
+      <line x1="91" y1="104" x2="107" y2="104" stroke="#0284c7" strokeWidth="2" />
+    </svg>
+  </div>
+);
+
+// Hero Right Floating Medical Decoration (Stethoscope & Amber Jar)
+const HeroRightDecoration = () => (
+  <div className="ref-hero-decor-right">
+    <svg viewBox="0 0 170 190" width="160" height="180" opacity="0.9" style={{ filter: "drop-shadow(0 10px 20px rgba(15,23,42,0.12))" }}>
+      {/* Stethoscope Head */}
+      <circle cx="120" cy="125" r="32" fill="none" stroke="#64748b" strokeWidth="6" />
+      <circle cx="120" cy="125" r="24" fill="#334155" />
+      <circle cx="120" cy="125" r="14" fill="#94a3b8" />
+      <path d="M 88 125 C 60 125 45 90 45 35" fill="none" stroke="#0f172a" strokeWidth="5" strokeLinecap="round" />
+      {/* Amber Medicine Jar */}
+      <rect x="25" y="75" width="44" height="75" rx="8" fill="#78350f" opacity="0.9" />
+      <rect x="30" y="62" width="34" height="14" rx="3" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.5" />
+      <rect x="27" y="94" width="40" height="38" rx="2" fill="#ffffff" />
+      <rect x="30" y="102" width="34" height="8" rx="2" fill="#ea580c" />
+      {/* Scattered orange tablets */}
+      <circle cx="85" cy="155" r="8" fill="#f97316" stroke="#c2410c" strokeWidth="1" />
+      <line x1="80" y1="155" x2="90" y2="155" stroke="#ffffff" strokeWidth="1.5" />
+      <circle cx="102" cy="168" r="7" fill="#f97316" stroke="#c2410c" strokeWidth="1" />
+    </svg>
+  </div>
+);
+
+// Promo 1: 3D Blue Medicine Box Mockup
+const PromoBoxMockup = () => (
+  <svg viewBox="0 0 130 110" width="120" height="100" style={{ filter: "drop-shadow(0 8px 16px rgba(2,132,199,0.22))" }}>
+    <polygon points="15,45 55,65 55,102 15,82" fill="#0284c7" />
+    <polygon points="55,65 115,44 115,82 55,102" fill="#38bdf8" />
+    <polygon points="15,45 75,25 115,44 55,65" fill="#7dd3fc" />
+    <circle cx="85" cy="68" r="13" fill="#ffffff" opacity="0.9" />
+    <rect x="82" y="60" width="6" height="16" rx="2" fill="#0284c7" />
+    <rect x="77" y="65" width="16" height="6" rx="2" fill="#0284c7" />
+    <line x1="25" y1="70" x2="25" y2="78" stroke="#ffffff" strokeWidth="2" opacity="0.7" />
+    <line x1="30" y1="70" x2="30" y2="78" stroke="#ffffff" strokeWidth="1" opacity="0.7" />
+    <line x1="34" y1="70" x2="34" y2="78" stroke="#ffffff" strokeWidth="2.5" opacity="0.7" />
+  </svg>
+);
+
+// Promo 2: Vitamin Bottles Mockup (Peach/Pink)
+const PromoVitaminsMockup = () => (
+  <svg viewBox="0 0 130 110" width="120" height="100" style={{ filter: "drop-shadow(0 8px 16px rgba(244,63,94,0.18))" }}>
+    <rect x="22" y="16" width="34" height="12" rx="3" fill="#ffffff" stroke="#e2e8f0" strokeWidth="1.5" />
+    <rect x="15" y="26" width="48" height="74" rx="10" fill="#ffffff" stroke="#fecdd3" strokeWidth="1.5" />
+    <rect x="17" y="40" width="44" height="44" rx="4" fill="#fff1f2" />
+    <rect x="21" y="46" width="36" height="7" rx="2" fill="#f43f5e" />
+    <circle cx="39" cy="68" r="7" fill="#fda4af" />
+    <rect x="74" y="34" width="26" height="10" rx="3" fill="#ffffff" stroke="#e2e8f0" strokeWidth="1.5" />
+    <rect x="68" y="42" width="38" height="58" rx="8" fill="#fff1f2" stroke="#fecdd3" strokeWidth="1.5" />
+    <rect x="70" y="54" width="34" height="32" rx="3" fill="#ffffff" />
+    <circle cx="87" cy="70" r="5" fill="#fb7185" />
+  </svg>
+);
+
+// Promo 3: Medical Tubes & Dropper (Mint Green)
+const PromoTubesMockup = () => (
+  <svg viewBox="0 0 130 110" width="120" height="100" style={{ filter: "drop-shadow(0 8px 16px rgba(16,185,129,0.18))" }}>
+    <g transform="rotate(-18 42 60)">
+      <rect x="32" y="14" width="20" height="70" rx="5" fill="#10b981" />
+      <rect x="36" y="7" width="12" height="8" rx="2" fill="#ffffff" stroke="#059669" strokeWidth="1" />
+      <rect x="34" y="30" width="16" height="34" rx="2" fill="#ffffff" />
+      <line x1="37" y1="39" x2="47" y2="39" stroke="#059669" strokeWidth="2" />
+    </g>
+    <rect x="74" y="24" width="22" height="75" rx="5" fill="#d1fae5" stroke="#a7f3d0" strokeWidth="1.5" />
+    <rect x="79" y="15" width="12" height="10" rx="2" fill="#059669" />
+    <rect x="76" y="42" width="18" height="38" rx="2" fill="#ffffff" />
+    <circle cx="85" cy="58" r="4.5" fill="#10b981" />
+  </svg>
+);
+
+// Promo 4: Cough Syrup & Blister (Yellow/Warm)
+const PromoSyrupMockup = () => (
+  <svg viewBox="0 0 130 110" width="120" height="100" style={{ filter: "drop-shadow(0 8px 16px rgba(245,158,11,0.18))" }}>
+    <rect x="25" y="14" width="18" height="10" rx="2" fill="#fef08a" stroke="#ca8a04" strokeWidth="1" />
+    <rect x="14" y="22" width="40" height="76" rx="8" fill="#78350f" opacity="0.9" />
+    <rect x="18" y="38" width="32" height="44" rx="3" fill="#fef9c3" />
+    <rect x="20" y="44" width="28" height="6" rx="2" fill="#eab308" />
+    <circle cx="34" cy="66" r="5" fill="#ca8a04" />
+    <rect x="62" y="32" width="48" height="66" rx="5" fill="#ffffff" stroke="#fde047" strokeWidth="1.5" />
+    <rect x="65" y="35" width="42" height="11" rx="2" fill="#facc15" />
+    <circle cx="73" cy="58" r="4.5" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
+    <circle cx="86" cy="58" r="4.5" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
+    <circle cx="99" cy="58" r="4.5" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
+    <circle cx="73" cy="78" r="4.5" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
+    <circle cx="86" cy="78" r="4.5" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
+    <circle cx="99" cy="78" r="4.5" fill="#ffffff" stroke="#ca8a04" strokeWidth="1.5" />
+  </svg>
+);
+
+// Miniature compositions for Circular Category Carousel
+const CategoryCircleGraphic = ({ type = "otc" }) => {
+  switch (type) {
+    case "ayush":
+    case "herbal":
+      return (
+        <svg viewBox="0 0 60 60" width="52" height="52">
+          <circle cx="30" cy="30" r="28" fill="#f0fdf4" />
+          <path d="M 30 14 C 20 20 20 38 30 42 C 40 38 40 20 30 14 Z" fill="#22c55e" />
+          <path d="M 30 18 L 30 38" stroke="#15803d" strokeWidth="2" strokeLinecap="round" />
+          <line x1="30" y1="26" x2="25" y2="23" stroke="#15803d" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="30" y1="30" x2="35" y2="27" stroke="#15803d" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      );
+    case "covid":
+    case "vitamin":
+      return (
+        <svg viewBox="0 0 60 60" width="52" height="52">
+          <circle cx="30" cy="30" r="28" fill="#fff7ed" />
+          <rect x="22" y="16" width="16" height="28" rx="6" fill="#f97316" />
+          <rect x="24" y="12" width="12" height="5" rx="1.5" fill="#ea580c" />
+          <line x1="30" y1="22" x2="30" y2="34" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1="24" y1="28" x2="36" y2="28" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
+        </svg>
+      );
+    case "devices":
+    case "alat":
+      return (
+        <svg viewBox="0 0 60 60" width="52" height="52">
+          <circle cx="30" cy="30" r="28" fill="#eff6ff" />
+          <rect x="18" y="20" width="24" height="24" rx="4" fill="#0284c7" />
+          <rect x="22" y="24" width="16" height="10" rx="2" fill="#ffffff" />
+          <circle cx="30" cy="38" r="2.5" fill="#38bdf8" />
+        </svg>
+      );
+    case "diabetes":
+      return (
+        <svg viewBox="0 0 60 60" width="52" height="52">
+          <circle cx="30" cy="30" r="28" fill="#fef2f2" />
+          <path d="M 30 14 C 23 23 20 28 20 34 C 20 40 24.5 45 30 45 C 35.5 45 40 40 40 34 C 40 28 37 23 30 14 Z" fill="#ef4444" />
+          <circle cx="27" cy="32" r="3" fill="#ffffff" opacity="0.6" />
+        </svg>
+      );
+    case "eyewear":
+    case "mata":
+      return (
+        <svg viewBox="0 0 60 60" width="52" height="52">
+          <circle cx="30" cy="30" r="28" fill="#f0f9ff" />
+          <rect x="24" y="22" width="12" height="24" rx="3" fill="#0284c7" />
+          <rect x="26" y="16" width="8" height="7" rx="1.5" fill="#38bdf8" />
+          <path d="M 30 11 L 30 15" stroke="#0284c7" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="30" cy="34" r="3" fill="#ffffff" />
+        </svg>
+      );
+    case "fitness":
+      return (
+        <svg viewBox="0 0 60 60" width="52" height="52">
+          <circle cx="30" cy="30" r="28" fill="#faf5ff" />
+          <rect x="20" y="18" width="20" height="26" rx="4" fill="#7e22ce" />
+          <rect x="22" y="14" width="16" height="5" rx="1.5" fill="#a855f7" />
+          <rect x="23" y="24" width="14" height="12" rx="2" fill="#ffffff" />
+        </svg>
+      );
+    default:
+      // OTC Dots (blister & bottles)
+      return (
+        <svg viewBox="0 0 60 60" width="52" height="52">
+          <circle cx="30" cy="30" r="28" fill="#eff6ff" />
+          <rect x="16" y="18" width="16" height="26" rx="3" fill="#0284c7" />
+          <rect x="19" y="14" width="10" height="5" rx="1" fill="#ffffff" />
+          <rect x="34" y="22" width="14" height="20" rx="3" fill="#ffffff" stroke="#38bdf8" strokeWidth="1.5" />
+          <circle cx="41" cy="28" r="2.5" fill="#0284c7" />
+          <circle cx="41" cy="36" r="2.5" fill="#0284c7" />
+        </svg>
+      );
+  }
+};
 
 // Realistic Minimalist Pharmaceutical Mockup SVG Component
 const MedicineIllustration = ({ name = "", category = "" }) => {
@@ -104,6 +307,42 @@ export const DashboardUser = ({ onAddToCart, onNavigate }) => {
   const [message, setMessage] = useState("");
   const [activeModalMed, setActiveModalMed] = useState(null);
   const [modalQty, setModalQty] = useState(1);
+  const [activePopularCat, setActivePopularCat] = useState(null);
+  const [activeHeroDot, setActiveHeroDot] = useState(0);
+
+  const popularCategories = [
+    { key: "otc", label: "Otc Dots", type: "otc", match: ["obat bebas", "analgesik", "umum", "batuk"] },
+    { key: "ayush", label: "Ayush", type: "ayush", match: ["herbal", "jamu", "tradisional"] },
+    { key: "covid", label: "Covid Essentials", type: "covid", match: ["flu", "batuk", "antivirus", "masker", "covid"] },
+    { key: "devices", label: "Devices", type: "devices", match: ["alat", "medis", "device", "tensimeter"] },
+    { key: "diabetes", label: "Diabetes", type: "diabetes", match: ["diabetes", "gula", "insulin"] },
+    { key: "eyewear", label: "Eyewear", type: "eyewear", match: ["mata", "tetes", "optik"] },
+    { key: "fitness", label: "Fitness", type: "fitness", match: ["vitamin", "suplemen", "nutrisi", "fitness"] },
+  ];
+
+  const handlePopularCategoryClick = (catItem) => {
+    if (activePopularCat === catItem.key) {
+      setActivePopularCat(null);
+      setSelectedCategory("");
+      setSearchQuery("");
+      return;
+    }
+
+    setActivePopularCat(catItem.key);
+    const found = categories.find(c => 
+      catItem.match.some(m => c.name.toLowerCase().includes(m))
+    );
+    if (found) {
+      setSelectedCategory(found.id.toString());
+      setSearchQuery("");
+    } else {
+      setSelectedCategory("");
+      setSearchQuery(catItem.match[0]);
+    }
+
+    const el = document.getElementById("daily-products-section");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
 
   const loadCatalog = async () => {
     try {
@@ -136,8 +375,9 @@ export const DashboardUser = ({ onAddToCart, onNavigate }) => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
+    setActivePopularCat(null);
     loadCatalog();
-    const el = document.getElementById("catalog-products-section");
+    const el = document.getElementById("daily-products-section");
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -194,152 +434,326 @@ export const DashboardUser = ({ onAddToCart, onNavigate }) => {
       )}
 
       {/* =========================================================
-          1. STORE HERO BANNER (CLEAN & PROFESSIONAL APOTEK HADINATA)
+          1. SKY BLUE REFERENCE HERO BANNER (MOVING MEDICINE TEMPLATE)
           ========================================================= */}
-      <div className="pharmacy-store-banner">
-        <div className="pharmacy-store-header">
-          <div className="store-status-pill">
-            <span className="status-indicator-dot"></span>
-            <span>Apotek Buka • 07.00 - 22.00 WIB</span>
-          </div>
-          <span className="store-sipa-badge">
-            <ShieldCheck size={14} color="var(--color-primary)" />
-            SIPA: 446/SIPA-120/2024
-          </span>
-        </div>
+      <section className="ref-hero-wrapper">
+        <HeroLeftDecoration />
+        <HeroRightDecoration />
 
-        <h1 className="pharmacy-store-title">
-          Apotek Hadinata
-        </h1>
-        <p className="pharmacy-store-subtitle">
-          Penyedia Obat Bebas, Resep Dokter & Suplemen Kesehatan Terpercaya dengan Jaminan Mutu FEFO & Pengantaran Kurir Cepat.
-        </p>
+        <div className="ref-hero-content">
+          <h1 className="ref-hero-title">
+            Healthy Tablets and Medicine
+          </h1>
+          <p className="ref-hero-subtitle">
+            Penyedia obat terpercaya, suplemen kesehatan alami & alat diagnosa medis terstandarisasi dengan jaminan mutu FEFO & pengantaran cepat.
+          </p>
 
-        {/* Clean Integrated Search Bar */}
-        <form className="mega-search-bar" onSubmit={handleSearchSubmit}>
-          <select 
-            className="mega-category-select"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            <option value="">Semua Kategori</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-
-          <div className="mega-search-divider"></div>
-
-          <input 
-            type="text"
-            className="mega-search-input"
-            placeholder="Cari nama obat (contoh: Paracetamol, Promag, Vitamin C)..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-
-          <button type="submit" className="mega-search-btn">
-            <Search size={16} />
-            <span>Cari Obat</span>
-          </button>
-        </form>
-
-        {/* Compact Trust Strip (1-Row, Native E-commerce Style) */}
-        <div className="store-trust-strip">
-          <div className="trust-strip-item">
-            <ShieldCheck size={20} className="trust-icon" />
-            <div>
-              <strong>100% Asli BPOM</strong>
-              <p>Distributor farmasi resmi</p>
-            </div>
-          </div>
-          <div className="trust-strip-divider"></div>
-          <div className="trust-strip-item">
-            <Truck size={20} className="trust-icon" />
-            <div>
-              <strong>Pengiriman Kilat</strong>
-              <p>Kurir apotek langsung ke rumah</p>
-            </div>
-          </div>
-          <div className="trust-strip-divider"></div>
-          <div className="trust-strip-item">
-            <Clock size={20} className="trust-icon" />
-            <div>
-              <strong>Kontrol Mutu FEFO</strong>
-              <p>Kedaluwarsa selalu dipantau</p>
-            </div>
-          </div>
-          <div className="trust-strip-divider"></div>
-          <div className="trust-strip-item trust-clickable" onClick={() => onNavigate("chat")} title="Klik untuk konsultasi dengan apoteker">
-            <MessageSquare size={20} className="trust-icon" />
-            <div>
-              <strong>Tanya Apoteker</strong>
-              <p>Konsultasi dosis & aturan minum</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* =========================================================
-          2. CATEGORY FILTER CHIPS (CLEAN E-COMMERCE PILLS)
-          ========================================================= */}
-      <section className="category-chips-section">
-        <div className="category-chips-header">
-          <div>
-            <h2 className="category-chips-title">Kategori Obat</h2>
-            <p className="category-chips-subtitle">Pilih kelompok obat untuk menyaring katalog produk</p>
-          </div>
-          {selectedCategory && (
-            <button 
-              className="btn btn-secondary btn-sm"
-              onClick={() => setSelectedCategory("")}
+          {/* Unified Pill Search Bar */}
+          <form className="ref-search-bar" onSubmit={handleSearchSubmit}>
+            <select 
+              className="ref-search-select"
+              value={selectedCategory}
+              onChange={(e) => {
+                setSelectedCategory(e.target.value);
+                setActivePopularCat(null);
+              }}
             >
-              Tampilkan Semua Produk
+              <option value="">All category</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+
+            <div className="ref-search-divider"></div>
+
+            <input 
+              type="text"
+              className="ref-search-input"
+              placeholder="Search for something fun or medicine..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+
+            <button type="submit" className="ref-search-btn" title="Cari Obat">
+              <Search size={16} />
             </button>
-          )}
-        </div>
+          </form>
 
-        <div className="category-chips-container">
-          <button 
-            className={`category-chip ${selectedCategory === "" ? "active" : ""}`}
-            onClick={() => setSelectedCategory("")}
-          >
-            Semua Produk
-          </button>
-
-          {categories.map((c) => (
+          {/* Two Rounded Action Buttons */}
+          <div className="ref-hero-actions">
             <button 
-              key={c.id}
-              className={`category-chip ${selectedCategory === c.id.toString() ? "active" : ""}`}
-              onClick={() => setSelectedCategory(selectedCategory === c.id.toString() ? "" : c.id.toString())}
+              className="ref-hero-btn-dark"
+              onClick={() => {
+                const el = document.getElementById("daily-products-section");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
             >
-              {c.name}
+              Check Now
             </button>
-          ))}
+            <button 
+              className="ref-hero-btn-light"
+              onClick={() => {
+                const el = document.getElementById("popular-categories-section");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+            >
+              Find Medicine
+            </button>
+          </div>
+
+          {/* 3 Carousel Indicator Dots */}
+          <div className="ref-hero-dots">
+            <span 
+              className={`ref-hero-dot ${activeHeroDot === 0 ? "active" : ""}`}
+              onClick={() => setActiveHeroDot(0)}
+              style={{ cursor: "pointer" }}
+            ></span>
+            <span 
+              className={`ref-hero-dot ${activeHeroDot === 1 ? "active" : ""}`}
+              onClick={() => setActiveHeroDot(1)}
+              style={{ cursor: "pointer" }}
+            ></span>
+            <span 
+              className={`ref-hero-dot ${activeHeroDot === 2 ? "active" : ""}`}
+              onClick={() => setActiveHeroDot(2)}
+              style={{ cursor: "pointer" }}
+            ></span>
+          </div>
         </div>
       </section>
 
       {/* =========================================================
-          4. PRODUCT SHOWCASE GRID (REALISTIC PHARMACY CARDS)
+          2. FOUR SERVICE PILLARS (DIRECTLY UNDER HERO)
           ========================================================= */}
-      <section id="catalog-products-section" style={{ paddingTop: "12px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "22px", flexWrap: "wrap", gap: "10px" }}>
+      <section className="services-pillars-grid">
+        <div className="service-pillar-item">
+          <div className="service-pillar-icon-box pillar-orange">
+            <Sun size={24} />
+          </div>
           <div>
-            <h2 style={{ fontSize: "1.5rem", fontWeight: 800 }}>Katalog Produk Apotek</h2>
-            <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem" }}>
-              Tersedia {medicines.length} produk obat siap dipesan dan diantar
+            <div className="service-pillar-title">Medicine</div>
+            <p className="service-pillar-desc">
+              Koleksi obat resmi BPOM, resep dokter & analgesik bermutu.
             </p>
           </div>
+        </div>
 
-          {selectedCategory && (
-            <button 
-              className="btn btn-secondary btn-sm"
-              onClick={() => setSelectedCategory("")}
-            >
-              Reset Filter
-            </button>
+        <div className="service-pillar-item">
+          <div className="service-pillar-icon-box pillar-green">
+            <Flower2 size={24} />
+          </div>
+          <div>
+            <div className="service-pillar-title">Wellness</div>
+            <p className="service-pillar-desc">
+              Suplemen multivitamin organik & produk gaya hidup fit.
+            </p>
+          </div>
+        </div>
+
+        <div className="service-pillar-item">
+          <div className="service-pillar-icon-box pillar-blue">
+            <Hexagon size={24} />
+          </div>
+          <div>
+            <div className="service-pillar-title">Diagnostic</div>
+            <p className="service-pillar-desc">
+              Peralatan tes mandiri, tensimeter & glukometer akurat.
+            </p>
+          </div>
+        </div>
+
+        <div className="service-pillar-item">
+          <div className="service-pillar-icon-box pillar-yellow">
+            <Shield size={24} />
+          </div>
+          <div>
+            <div className="service-pillar-title">Health Corner</div>
+            <p className="service-pillar-desc">
+              Konsultasi apoteker berlisensi & panduan penggunaan obat.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          3. FOUR PASTEL PROMO HIGHLIGHT BANNERS (SIDE BY SIDE)
+          ========================================================= */}
+      <section className="promo-banners-grid">
+        {/* Banner 1: Blue - Medication at One Place */}
+        <div 
+          className="promo-banner-card promo-card-blue"
+          onClick={() => {
+            setSelectedCategory("");
+            setSearchQuery("");
+            setActivePopularCat(null);
+            const el = document.getElementById("daily-products-section");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
+          <div>
+            <div className="promo-card-tag">GET ALL YOUR</div>
+            <div className="promo-card-title">Medication at One Place</div>
+            <button className="promo-card-btn">Shop Now →</button>
+          </div>
+          <div className="promo-card-art">
+            <PromoBoxMockup />
+          </div>
+        </div>
+
+        {/* Banner 2: Pink - Naturally Good */}
+        <div 
+          className="promo-banner-card promo-card-pink"
+          onClick={() => {
+            const vitCat = categories.find(c => c.name.toLowerCase().includes("vitamin") || c.name.toLowerCase().includes("suplemen"));
+            if (vitCat) {
+              setSelectedCategory(vitCat.id.toString());
+            } else {
+              setSearchQuery("Vitamin");
+            }
+            const el = document.getElementById("daily-products-section");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
+          <div>
+            <div className="promo-card-tag">UP TO 15% OFF</div>
+            <div className="promo-card-title">Naturally Good</div>
+            <button className="promo-card-btn">Shop Now →</button>
+          </div>
+          <div className="promo-card-art">
+            <PromoVitaminsMockup />
+          </div>
+        </div>
+
+        {/* Banner 3: Green - Medlife Products */}
+        <div 
+          className="promo-banner-card promo-card-green"
+          onClick={() => {
+            const fluCat = categories.find(c => c.name.toLowerCase().includes("flu") || c.name.toLowerCase().includes("batuk") || c.name.toLowerCase().includes("pencernaan"));
+            if (fluCat) {
+              setSelectedCategory(fluCat.id.toString());
+            } else {
+              setSearchQuery("Flu");
+            }
+            const el = document.getElementById("daily-products-section");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
+          <div>
+            <div className="promo-card-tag">UP TO 20% OFF</div>
+            <div className="promo-card-title">Medlife Products</div>
+            <button className="promo-card-btn">Shop Now →</button>
+          </div>
+          <div className="promo-card-art">
+            <PromoTubesMockup />
+          </div>
+        </div>
+
+        {/* Banner 4: Yellow - Medicines Popularly */}
+        <div 
+          className="promo-banner-card promo-card-yellow"
+          onClick={() => {
+            setSelectedCategory("");
+            setSearchQuery("");
+            setActivePopularCat(null);
+            const el = document.getElementById("daily-products-section");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
+          <div>
+            <div className="promo-card-tag">UP TO 25% OFF</div>
+            <div className="promo-card-title">Medicines Popularly</div>
+            <button className="promo-card-btn">Shop Now →</button>
+          </div>
+          <div className="promo-card-art">
+            <PromoSyrupMockup />
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          4. POPULAR CATEGORIES CAROUSEL (CIRCULAR PHOTO CARDS)
+          ========================================================= */}
+      <section className="popular-categories-section" id="popular-categories-section">
+        <div className="section-label-cyan">Our Categories</div>
+        <h2 className="section-title-bold">Popular Categories</h2>
+
+        <div className="popular-categories-carousel">
+          <button 
+            className="carousel-nav-btn"
+            title="Kategori Sebelumnya"
+            onClick={() => {
+              const container = document.getElementById("popular-categories-carousel-list");
+              if (container) container.scrollBy({ left: -140, behavior: "smooth" });
+            }}
+          >
+            <ChevronLeft size={18} />
+          </button>
+
+          <div 
+            id="popular-categories-carousel-list"
+            style={{ 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "24px", 
+              overflowX: "auto", 
+              scrollBehavior: "smooth",
+              padding: "8px 6px" 
+            }}
+          >
+            {popularCategories.map((cat) => {
+              const isActive = activePopularCat === cat.key;
+              return (
+                <button
+                  key={cat.key}
+                  className={`popular-category-item ${isActive ? "active" : ""}`}
+                  onClick={() => handlePopularCategoryClick(cat)}
+                  title={`Filter kategori: ${cat.label}`}
+                >
+                  <div className="popular-category-circle">
+                    <CategoryCircleGraphic type={cat.type} />
+                  </div>
+                  <span className="popular-category-name">{cat.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <button 
+            className="carousel-nav-btn"
+            title="Kategori Selanjutnya"
+            onClick={() => {
+              const container = document.getElementById("popular-categories-carousel-list");
+              if (container) container.scrollBy({ left: 140, behavior: "smooth" });
+            }}
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
+      </section>
+
+      {/* =========================================================
+          5. OUR DAILY PRODUCTS GRID (+10,000 PHARMACY PRODUCTS)
+          ========================================================= */}
+      <section className="daily-products-section" id="daily-products-section">
+        <div className="daily-products-header">
+          <div className="section-label-cyan">Our Daily Products</div>
+          <h2 className="section-title-bold">+10,000 Pharmacy products daily!</h2>
+
+          {(selectedCategory || searchQuery || activePopularCat) && (
+            <div style={{ marginTop: "12px" }}>
+              <button 
+                className="btn btn-secondary btn-sm"
+                onClick={() => {
+                  setSelectedCategory("");
+                  setSearchQuery("");
+                  setActivePopularCat(null);
+                }}
+              >
+                Reset Filter ({medicines.length} produk ditemukan)
+              </button>
+            </div>
           )}
         </div>
 
@@ -352,15 +766,15 @@ export const DashboardUser = ({ onAddToCart, onNavigate }) => {
           <div className="card" style={{ padding: "60px 20px", textAlign: "center" }}>
             <p style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: "8px" }}>Obat Tidak Ditemukan</p>
             <p style={{ color: "var(--color-text-muted)", marginBottom: "20px" }}>
-              Tidak ada produk obat yang cocok dengan pencarian Anda.
+              Tidak ada produk obat yang cocok dengan kriteria pencarian Anda.
             </p>
-            <button className="btn btn-primary" onClick={() => { setSearchQuery(""); setSelectedCategory(""); }}>
+            <button className="btn btn-primary" onClick={() => { setSearchQuery(""); setSelectedCategory(""); setActivePopularCat(null); }}>
               Tampilkan Semua Produk
             </button>
           </div>
         ) : (
-          <div className="modern-products-grid">
-            {medicines.map((med) => {
+          <div className="daily-products-grid">
+            {medicines.map((med, idx) => {
               const totalStock = (med.batches || []).reduce((s, b) => s + (b.stock || 0), 0);
               const isOutOfStock = totalStock <= 0;
               
@@ -368,15 +782,19 @@ export const DashboardUser = ({ onAddToCart, onNavigate }) => {
               const sortedBatches = [...(med.batches || [])].sort((a, b) => new Date(a.expiry_date) - new Date(b.expiry_date));
               const earliestExp = sortedBatches[0]?.expiry_date;
 
-              return (
-                <div key={med.id} className="modern-product-card">
-                  <div>
-                    {/* Packaging Mockup Container */}
-                    <div className="product-img-wrapper">
-                      <span className="product-badge-float">
-                        BPOM
-                      </span>
+              const discounts = ["15% OFF", "20% OFF", "BPOM", "BEST SELLER"];
+              const badgeText = discounts[idx % discounts.length];
 
+              return (
+                <div key={med.id} className="daily-product-card">
+                  <div>
+                    {/* Discount badge */}
+                    <span className="product-discount-badge">
+                      {badgeText}
+                    </span>
+
+                    {/* Packaging Mockup Container */}
+                    <div className="daily-product-img-box">
                       {med.image ? (
                         <img src={med.image} alt={med.name} />
                       ) : (
@@ -384,68 +802,78 @@ export const DashboardUser = ({ onAddToCart, onNavigate }) => {
                       )}
                     </div>
 
-                    <div className="product-card-category">
-                      {med.Category?.name || "Obat Bebas"}
+                    <div className="daily-product-category">
+                      {med.Category?.name || "Personal Care, General Wellness"}
                     </div>
 
-                    <h3 className="product-card-title" title={med.name}>
+                    <h3 className="daily-product-title" title={med.name}>
                       {med.name}
                     </h3>
 
+                    {/* Star Rating */}
+                    <div className="daily-product-rating">
+                      <Star size={13} fill="#eab308" color="#eab308" />
+                      <Star size={13} fill="#eab308" color="#eab308" />
+                      <Star size={13} fill="#eab308" color="#eab308" />
+                      <Star size={13} fill="#eab308" color="#eab308" />
+                      <Star size={13} fill="#eab308" color="#eab308" />
+                      <span style={{ fontSize: "0.75rem", color: "#64748b", marginLeft: "4px" }}>
+                        (4.8)
+                      </span>
+                    </div>
+
                     {/* Stock & FEFO Badges */}
-                    <div style={{ display: "flex", gap: "6px", alignItems: "center", marginBottom: "8px", flexWrap: "wrap" }}>
+                    <div style={{ display: "flex", gap: "6px", alignItems: "center", marginBottom: "12px", flexWrap: "wrap" }}>
                       {isOutOfStock ? (
-                        <span className="badge badge-admin" style={{ background: "#fee2e2", color: "#991b1b" }}>
+                        <span className="badge badge-admin" style={{ background: "#fee2e2", color: "#991b1b", fontSize: "0.68rem" }}>
                           Stok Habis
                         </span>
                       ) : (
-                        <span className="badge badge-user" style={{ fontSize: "0.7rem" }}>
+                        <span className="badge badge-user" style={{ fontSize: "0.68rem" }}>
                           Stok: {totalStock} unit
                         </span>
                       )}
 
                       {earliestExp && !isOutOfStock && (
-                        <span className="expiry-tag expiry-safe" style={{ fontSize: "0.68rem" }}>
+                        <span className="expiry-tag expiry-safe" style={{ fontSize: "0.65rem" }}>
                           Exp: {earliestExp}
                         </span>
                       )}
                     </div>
+
+                    {/* Price with strikethrough original */}
+                    <div className="daily-product-prices">
+                      <span className="daily-product-price-current">
+                        Rp {(med.price || 0).toLocaleString("id-ID")}
+                      </span>
+                      <span className="daily-product-price-original">
+                        Rp {Math.round((med.price || 0) * 1.2).toLocaleString("id-ID")}
+                      </span>
+                    </div>
                   </div>
 
-                  <div>
-                    {/* Price and Cart Action */}
-                    <div className="product-card-price-row">
-                      <div>
-                        <div style={{ fontSize: "0.7rem", color: "var(--color-text-muted)" }}>Harga</div>
-                        <div className="product-price-val">
-                          Rp {(med.price || 0).toLocaleString("id-ID")}
-                        </div>
-                      </div>
+                  {/* Add to Cart & Batch Detail Action */}
+                  <div style={{ display: "flex", gap: "8px", alignItems: "center", marginTop: "auto" }}>
+                    <button 
+                      className="daily-add-cart-btn"
+                      onClick={() => handleAdd(med, 1)}
+                      disabled={isOutOfStock}
+                    >
+                      <ShoppingCart size={14} />
+                      <span>+ ADD TO CART</span>
+                    </button>
 
-                      <div style={{ display: "flex", gap: "6px" }}>
-                        <button 
-                          className="btn btn-secondary btn-sm"
-                          style={{ padding: "8px 10px" }}
-                          onClick={() => {
-                            setActiveModalMed(med);
-                            setModalQty(1);
-                          }}
-                          title="Lihat Detail & Khasiat"
-                        >
-                          <Eye size={15} />
-                        </button>
-
-                        <button 
-                          className="btn btn-primary btn-sm"
-                          style={{ padding: "8px 14px" }}
-                          onClick={() => handleAdd(med, 1)}
-                          disabled={isOutOfStock}
-                        >
-                          <ShoppingCart size={15} />
-                          <span>+ Beli</span>
-                        </button>
-                      </div>
-                    </div>
+                    <button 
+                      className="btn btn-secondary btn-sm"
+                      style={{ padding: "8px 10px", borderRadius: "9999px", flexShrink: 0 }}
+                      onClick={() => {
+                        setActiveModalMed(med);
+                        setModalQty(1);
+                      }}
+                      title="Lihat Detail FEFO & Khasiat"
+                    >
+                      <Eye size={15} />
+                    </button>
                   </div>
                 </div>
               );

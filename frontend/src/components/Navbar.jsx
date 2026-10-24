@@ -31,8 +31,31 @@ export const Navbar = ({ currentTab, onSelectTab, cartCount = 0 }) => {
   };
 
   return (
-    <nav className="navbar">
-      <div className="navbar-inner">
+    <header className="site-header">
+      {/* Top Contact & Info Bar (from reference design) */}
+      <div className="navbar-top-bar">
+        <div className="navbar-top-inner">
+          <div className="navbar-top-left">
+            <span>✉️ info@apotekhadinata.com</span>
+            <span className="navbar-top-divider">•</span>
+            <span>📞 (+62) 812-7878-5387</span>
+            <span className="navbar-top-divider">•</span>
+            <span>🕒 Buka: 07.00 - 22.00 WIB</span>
+          </div>
+          <div className="navbar-top-right">
+            <span>SIPA: 446/SIPA-120/2024</span>
+            <span className="navbar-top-divider">•</span>
+            <div className="top-social-links">
+              <span className="social-pill-icon">FB</span>
+              <span className="social-pill-icon">IG</span>
+              <span className="social-pill-icon">WA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav className="navbar">
+        <div className="navbar-inner">
         {/* Brand Logo */}
         <div 
           className="brand-logo" 
@@ -235,5 +258,6 @@ export const Navbar = ({ currentTab, onSelectTab, cartCount = 0 }) => {
         </div>
       </div>
     </nav>
+  </header>
   );
 };
