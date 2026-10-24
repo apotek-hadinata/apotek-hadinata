@@ -6,6 +6,8 @@ import { DashboardAdmin } from "./pages/DashboardAdmin";
 import { AdminMedicines } from "./pages/AdminMedicines";
 import { DashboardUser } from "./pages/DashboardUser";
 import { DashboardCourier } from "./pages/DashboardCourier";
+import { CartPage } from "./pages/CartPage";
+import { UserOrdersPage } from "./pages/UserOrdersPage";
 import { api } from "./services/api";
 
 function AppContent() {
@@ -124,26 +126,16 @@ function AppContent() {
               />
             )}
             {currentTab === "cart" && (
-              <div className="card animate-fade-in">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                  <h2>🛒 Keranjang Belanja</h2>
-                  <button className="btn btn-secondary btn-sm" onClick={() => setCurrentTab("catalog")}>Belanja Lagi</button>
-                </div>
-                <p style={{ color: "var(--color-text-muted)" }}>
-                  Modul keranjang belanja interaktif & checkout akan diaktifkan penuh pada <strong>Sprint 3 & 4</strong>.
-                </p>
-              </div>
+              <CartPage 
+                onBackToCatalog={() => setCurrentTab("catalog")}
+                onCartUpdated={refreshCart}
+                onNavigateToOrders={() => setCurrentTab("orders")}
+              />
             )}
             {currentTab === "orders" && (
-              <div className="card animate-fade-in">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                  <h2>📦 Riwayat Pesanan Saya</h2>
-                  <button className="btn btn-secondary btn-sm" onClick={() => setCurrentTab("catalog")}>Katalog</button>
-                </div>
-                <p style={{ color: "var(--color-text-muted)" }}>
-                  Status pelacakan pesanan online Anda akan tampil di sini (Sprint 4).
-                </p>
-              </div>
+              <UserOrdersPage 
+                onBackToCatalog={() => setCurrentTab("catalog")}
+              />
             )}
             {currentTab === "chat" && (
               <div className="card animate-fade-in">
