@@ -977,65 +977,73 @@ button, input, select, textarea {
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
-.bento-blue {
-  background: #f0f7ff;
-  border-color: #dbeafe;
+.pharmacy-hero-wrapper {
+  background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%);
+  border-radius: var(--radius-xl);
+  padding: 40px 32px 48px;
+  margin-bottom: 32px;
+  border: 1px solid #e2e8f0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
 }
-.bento-blue:hover { border-color: #93c5fd; }
-.bento-blue .bento-icon { background: #dbeafe; color: #1d4ed8; }
 
-.bento-amber {
-  background: #fffbeb;
-  border-color: #fef3c7;
+.bento-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-decoration: none;
+  box-shadow: var(--shadow-xs);
 }
-.bento-amber:hover { border-color: #fcd34d; }
-.bento-amber .bento-icon { background: #fef3c7; color: #b45309; }
 
-.bento-emerald {
-  background: #ecfdf5;
-  border-color: #d1fae5;
+.bento-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
 }
-.bento-emerald:hover { border-color: #6ee7b7; }
-.bento-emerald .bento-icon { background: #d1fae5; color: #047857; }
 
-.bento-purple {
-  background: #f5f3ff;
-  border-color: #ede9fe;
-}
-.bento-purple:hover { border-color: #c4b5fd; }
-.bento-purple .bento-icon { background: #ede9fe; color: #6d28d9; }
+.bento-blue .bento-icon { background: #eff6ff; color: #0284c7; }
+.bento-amber .bento-icon { background: #fff7ed; color: #ea580c; }
+.bento-emerald .bento-icon { background: #f0fdf4; color: #16a34a; }
+.bento-purple .bento-icon { background: #f0fdfa; color: #0f766e; }
 
 .bento-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .bento-title {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--color-text-main);
   margin-bottom: 4px;
 }
 
 .bento-desc {
-  font-size: 0.85rem;
+  font-size: 0.825rem;
   color: var(--color-text-muted);
-  line-height: 1.4;
-  margin-bottom: 14px;
+  line-height: 1.45;
+  margin-bottom: 12px;
 }
 
 .bento-link {
-  font-size: 0.85rem;
+  font-size: 0.825rem;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--color-text-main);
+  color: var(--color-primary);
 }
 
 /* Category Circles */
