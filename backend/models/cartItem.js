@@ -1,4 +1,3 @@
-
 "use strict";
 
 const { Model } = require("sequelize");
@@ -30,11 +29,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 1,
-      },
-      is_selected: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
       },
     },
     {

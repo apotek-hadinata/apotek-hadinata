@@ -1,31 +1,22 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { 
-  Lock, 
-  Mail, 
-  User, 
-  Phone, 
-  MapPin, 
-  ShieldCheck, 
-  Truck, 
-  AlertCircle, 
-  CheckCircle2, 
+import {
+  AlertCircle,
+  CheckCircle2,
   ArrowRight,
-  Pill
 } from "lucide-react";
 
 export const AuthPage = ({ onSuccess }) => {
   const { login, register } = useAuth();
   const [isLoginMode, setIsLoginMode] = useState(true);
-  
-  // Form states
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     password: "",
     address: "",
-    role: "user"
+    role: "user",
   });
 
   const [loading, setLoading] = useState(false);
@@ -49,12 +40,11 @@ export const AuthPage = ({ onSuccess }) => {
         if (onSuccess) onSuccess();
       } else {
         await register(formData);
-        setSuccess("Pendaftaran berhasil! Mengalihkan ke login...");
+        setSuccess("Pendaftaran berhasil. Mengalihkan sesi akun...");
         setTimeout(async () => {
-          // Auto login after registration
           await login(formData.email, formData.password);
           if (onSuccess) onSuccess();
-        }, 1200);
+        }, 1000);
       }
     } catch (err) {
       setError(err.message || "Terjadi kesalahan pada server");
@@ -63,7 +53,6 @@ export const AuthPage = ({ onSuccess }) => {
     }
   };
 
-  // Quick 1-click Demo Logins
   const handleQuickLogin = async (email, password) => {
     setError("");
     setLoading(true);
@@ -71,7 +60,7 @@ export const AuthPage = ({ onSuccess }) => {
       await login(email, password);
       if (onSuccess) onSuccess();
     } catch (err) {
-      setError(err.message || "Gagal melakukan demo login");
+      setError(err.message || "Gagal masuk dengan akun pengujian");
     } finally {
       setLoading(false);
     }
@@ -80,81 +69,78 @@ export const AuthPage = ({ onSuccess }) => {
   return (
     <div className="auth-wrapper">
       <div className="auth-card animate-fade-in">
-        {/* Header Icon & Title */}
-        <div style={{ textAlign: "center", marginBottom: "24px" }}>
-          <div 
-            style={{ 
-              width: "48px", 
-              height: "48px", 
-              borderRadius: "14px", 
-              background: "linear-gradient(135deg, #059669, #0d9488)", 
-              color: "white", 
-              display: "flex", 
-              alignItems: "center", 
-              justifyContent: "center",
-              margin: "0 auto 12px",
-              boxShadow: "0 6px 16px rgba(5, 150, 105, 0.25)"
-            }}
-          >
-            <Pill size={26} />
+        <div style={{ marginBottom: "20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+            <div className="brand-icon-wrapper" style={{ width: "32px", height: "32px", fontSize: "0.85rem" }}>
+              H+
+            </div>
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "0.95rem", color: "var(--ink-forest)" }}>
+              APOTEK <span style={{ color: "var(--color-primary)" }}>HADINATA</span>
+            </span>
           </div>
-          <h2 style={{ fontSize: "1.5rem", fontWeight: "800", color: "var(--color-text-main)" }}>
-            Apotek Hadinata
+          <h2 style={{ fontSize: "1.45rem" }}>
+            {isLoginMode ? "Masuk Akun Pelanggan & Petugas" : "Daftar Akun Baru"}
           </h2>
-          <p style={{ color: "var(--color-text-muted)", fontSize: "0.875rem", marginTop: "4px" }}>
-            {isLoginMode ? "Masuk ke portal layanan apotek digital" : "Daftarkan akun baru Anda"}
+          <p style={{ color: "var(--color-text-muted)", fontSize: "0.84rem", marginTop: "4px" }}>
+            {isLoginMode
+              ? "Masuk untuk memesan obat, melacak kurir, atau konsultasi apoteker."
+              : "Lengkapi identitas dan alamat untuk kemudahan pengiriman obat."}
           </p>
         </div>
 
-        {/* Tab Switcher */}
+        {/* Mode Switcher */}
         <div className="auth-tabs">
-          <button 
+          <button
             type="button"
             className={`auth-tab-btn ${isLoginMode ? "active" : ""}`}
-            onClick={() => { setIsLoginMode(true); setError(""); setSuccess(""); }}
+            onClick={() => {
+              setIsLoginMode(true);
+              setError("");
+              setSuccess("");
+            }}
           >
             Masuk
           </button>
-          <button 
+          <button
             type="button"
             className={`auth-tab-btn ${!isLoginMode ? "active" : ""}`}
-            onClick={() => { setIsLoginMode(false); setError(""); setSuccess(""); }}
+            onClick={() => {
+              setIsLoginMode(false);
+              setError("");
+              setSuccess("");
+            }}
           >
-            Daftar Akun Baru
+            Daftar Akun
           </button>
         </div>
 
-        {/* Notifications */}
         {error && (
           <div className="alert alert-error">
-            <AlertCircle size={18} />
+            <AlertCircle size={16} />
             <span>{error}</span>
           </div>
         )}
         {success && (
           <div className="alert alert-success">
-            <CheckCircle2 size={18} />
+            <CheckCircle2 size={16} />
             <span>{success}</span>
           </div>
         )}
 
-        {/* Form Body */}
         <form onSubmit={handleSubmit}>
           {!isLoginMode && (
             <>
               <div className="form-group">
                 <label className="form-label">Nama Lengkap</label>
-                <div style={{ position: "relative" }}>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    className="form-input"
-                    placeholder="Contoh: Budi Santoso"
-                    value={formData.name}
-                    onChange={handleChange}
-                  />
-                </div>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  className="form-input"
+                  placeholder="Nama lengkap sesuai identitas"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
               </div>
 
               <div className="form-group">
@@ -164,28 +150,28 @@ export const AuthPage = ({ onSuccess }) => {
                   name="phone"
                   required
                   className="form-input"
-                  placeholder="08123456789"
+                  placeholder="0812xxxxxxxx"
                   value={formData.phone}
                   onChange={handleChange}
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Peran / Role Akun</label>
+                <label className="form-label">Peran Akun</label>
                 <select
                   name="role"
                   className="form-select"
                   value={formData.role}
                   onChange={handleChange}
                 >
-                  <option value="user">Pelanggan (Beli Obat Online)</option>
-                  <option value="kurir">Kurir Internal (Pengantaran)</option>
+                  <option value="user">Pelanggan</option>
+                  <option value="kurir">Kurir Internal</option>
                   <option value="admin">Admin / Apoteker</option>
                 </select>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Alamat Lengkap</label>
+                <label className="form-label">Alamat Pengiriman</label>
                 <textarea
                   name="address"
                   rows={2}
@@ -205,14 +191,14 @@ export const AuthPage = ({ onSuccess }) => {
               name="email"
               required
               className="form-input"
-              placeholder="nama@email.com"
+              placeholder="nama@domain.com"
               value={formData.email}
               onChange={handleChange}
             />
           </div>
 
           <div className="form-group">
-            <label className="form-label">Kata Sandi (Password)</label>
+            <label className="form-label">Kata Sandi</label>
             <input
               type="password"
               name="password"
@@ -225,50 +211,47 @@ export const AuthPage = ({ onSuccess }) => {
             />
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn btn-primary btn-block"
             disabled={loading}
-            style={{ marginTop: "12px" }}
+            style={{ marginTop: "8px" }}
           >
-            {loading ? "Memproses..." : (isLoginMode ? "Masuk ke Akun" : "Daftar Akun Sekarang")}
-            {!loading && <ArrowRight size={16} />}
+            <span>{loading ? "Memverifikasi..." : isLoginMode ? "Masuk Sekarang" : "Daftar Sekarang"}</span>
+            {!loading && <ArrowRight size={15} />}
           </button>
         </form>
 
-        {/* 1-Click Quick Demo Login Shortcuts */}
+        {/* Quick Test Accounts */}
         <div className="demo-login-box">
-          <div className="demo-title">⚡ Uji Coba Cepat (Demo 1-Klik)</div>
+          <div className="demo-title">Akses Cepat Akun Demo</div>
           <div className="demo-grid">
-            <div 
+            <button
+              type="button"
               className="demo-card-btn"
               onClick={() => handleQuickLogin("admin@apotekhadinata.com", "password123")}
-              title="Masuk sebagai Owner / Admin Apotek"
             >
-              <ShieldCheck size={20} color="#059669" />
               <span className="demo-card-role">Admin</span>
-              <span className="demo-card-hint">Owner Apotek</span>
-            </div>
+              <span className="demo-card-hint">FEFO & Kasir POS</span>
+            </button>
 
-            <div 
+            <button
+              type="button"
               className="demo-card-btn"
               onClick={() => handleQuickLogin("budi@gmail.com", "password123")}
-              title="Masuk sebagai Pelanggan Pembeli Obat"
             >
-              <User size={20} color="#0284c7" />
               <span className="demo-card-role">Pelanggan</span>
-              <span className="demo-card-hint">Beli Online</span>
-            </div>
+              <span className="demo-card-hint">Belanja Obat</span>
+            </button>
 
-            <div 
+            <button
+              type="button"
               className="demo-card-btn"
               onClick={() => handleQuickLogin("kurir@apotekhadinata.com", "password123")}
-              title="Masuk sebagai Kurir Pengantar Obat"
             >
-              <Truck size={20} color="#d97706" />
               <span className="demo-card-role">Kurir</span>
-              <span className="demo-card-hint">Antar Obat</span>
-            </div>
+              <span className="demo-card-hint">Antar Pesanan</span>
+            </button>
           </div>
         </div>
       </div>

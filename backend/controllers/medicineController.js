@@ -1,10 +1,45 @@
 "use strict";
-const { Medicine, MedicineBatch, Category, sequelize } = require("../models");
+const { Medicine, MedicineBatch, Category, StockLog, User, sequelize } = require("../models");
 const { Op } = require("sequelize");
+const { recordActivityLog } = require("../utils/activityLogger");
+const { checkAndNotifyInventoryAlerts } = require("../utils/inventoryAlerts");
+
+// Helper: catat log mutasi stok secara aman tanpa menggagalkan transaksi utama
+const recordStockLogSafe = async (payload) => {
+  try {
+    await StockLog.create(payload);
+  } catch (err) {
+    console.warn("StockLog warning:", err.message);
+  }
+};
 
 // ==========================================
 // 1. DOMAIN: MEDICINE (MASTER DATA OBAT)
 // ==========================================
+
+// Upload File Foto Produk Obat (Multer)
+exports.uploadMedicineImage = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        status: "error",
+        message: "Pilih file gambar produk terlebih dahulu (JPG, PNG, WEBP maks. 4MB).",
+      });
+    }
+
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const imageUrl = `${baseUrl}/uploads/medicines/${req.file.filename}`;
+
+    return res.status(201).json({
+      status: "success",
+      message: "Foto produk obat berhasil diunggah",
+      imageUrl,
+      filename: req.file.filename,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // Create Medicine
 exports.createMedicine = async (req, res, next) => {
@@ -22,10 +57,19 @@ exports.createMedicine = async (req, res, next) => {
         status: status || "in stock",
         image: image || null,
       },
-      { transaction: t },
+      { transaction: t }
     );
 
     await t.commit();
+
+    await recordActivityLog({
+      admin_id: req.user?.id,
+      action: "CREATE_MEDICINE",
+      description: `Admin menambahkan obat baru: ${name} (SKU: ${SKU_code}, Rp ${price})`,
+      entity_type: "Medicine",
+      entity_id: newMedicine.id,
+      req,
+    });
 
     return res.status(201).json({
       status: "success",
@@ -111,10 +155,19 @@ exports.updateMedicine = async (req, res, next) => {
         status: status || medicine.status,
         image: image !== undefined ? image : medicine.image,
       },
-      { transaction: t },
+      { transaction: t }
     );
 
     await t.commit();
+
+    await recordActivityLog({
+      admin_id: req.user?.id,
+      action: "UPDATE_MEDICINE",
+      description: `Admin memperbarui obat #${medicine.id} (${medicine.name})`,
+      entity_type: "Medicine",
+      entity_id: medicine.id,
+      req,
+    });
 
     return res.status(200).json({
       status: "success",
@@ -139,8 +192,18 @@ exports.deleteMedicine = async (req, res, next) => {
       return res.status(404).json({ message: "Data obat tidak ditemukan" });
     }
 
+    const medName = medicine.name;
     await medicine.destroy({ transaction: t });
     await t.commit();
+
+    await recordActivityLog({
+      admin_id: req.user?.id,
+      action: "DELETE_MEDICINE",
+      description: `Admin menghapus master obat #${id} (${medName})`,
+      entity_type: "Medicine",
+      entity_id: Number(id),
+      req,
+    });
 
     return res.status(200).json({
       status: "success",
@@ -153,8 +216,30 @@ exports.deleteMedicine = async (req, res, next) => {
 };
 
 // ==========================================
-// 2. DOMAIN: MEDICINE BATCH (STOK KLOTER)
+// 2. DOMAIN: MEDICINE BATCH (STOK KLOTER) & FEFO LOGS
 // ==========================================
+
+// Ambil Riwayat Mutasi Stok & Audit Pemotongan FEFO
+exports.getStockLogs = async (_req, res, next) => {
+  try {
+    const logs = await StockLog.findAll({
+      include: [
+        { model: Medicine, attributes: ["id", "name", "SKU_code"] },
+        { model: MedicineBatch, attributes: ["id", "batch_number", "expiry_date"] },
+        { model: User, as: "admin", attributes: ["id", "name", "role"] },
+      ],
+      order: [["createdAt", "DESC"]],
+      limit: 150,
+    });
+
+    return res.status(200).json({
+      status: "success",
+      data: logs,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // Tambah Batch / Kloter Stok Baru
 exports.addMedicineBatch = async (req, res, next) => {
@@ -175,10 +260,33 @@ exports.addMedicineBatch = async (req, res, next) => {
         expiry_date,
         stock,
       },
-      { transaction: t },
+      { transaction: t }
     );
 
     await t.commit();
+
+    await recordStockLogSafe({
+      medicine_id: Number(medicine_id),
+      batch_id: newBatch.id,
+      admin_id: req.user?.id || null,
+      activity_type: "stock_in",
+      quantity: Number(stock),
+      stock_before: 0,
+      stock_after: Number(stock),
+      notes: `Penambahan kloter baru ${batch_number} (ED: ${String(expiry_date).slice(0, 10)})`,
+    });
+
+    await recordActivityLog({
+      admin_id: req.user?.id,
+      action: "ADD_MEDICINE_BATCH",
+      description: `Admin menambahkan kloter ${batch_number} (${stock} unit, ED: ${String(expiry_date).slice(0, 10)}) untuk ${medicine.name}`,
+      entity_type: "MedicineBatch",
+      entity_id: newBatch.id,
+      req,
+    });
+
+    // Peringatan otomatis jika stok sedikit atau dekat kedaluwarsa
+    checkAndNotifyInventoryAlerts(medicine_id);
 
     return res.status(201).json({
       status: "success",
@@ -203,8 +311,19 @@ exports.deleteMedicineBatch = async (req, res, next) => {
       return res.status(404).json({ message: "Kloter stok (batch) tidak ditemukan" });
     }
 
+    const bNum = batch.batch_number;
+    const medId = batch.medicine_id;
     await batch.destroy({ transaction: t });
     await t.commit();
+
+    await recordActivityLog({
+      admin_id: req.user?.id,
+      action: "DELETE_MEDICINE_BATCH",
+      description: `Admin menghapus kloter ${bNum} (Obat #${medId})`,
+      entity_type: "MedicineBatch",
+      entity_id: Number(batchId),
+      req,
+    });
 
     return res.status(200).json({
       status: "success",
@@ -229,16 +348,43 @@ exports.updateMedicineBatch = async (req, res, next) => {
       return res.status(404).json({ message: "Kloter stok (batch) tidak ditemukan" });
     }
 
+    const prevStock = batch.stock;
+    const nextStock = stock !== undefined ? Number(stock) : prevStock;
+
     await batch.update(
       {
         batch_number: batch_number || batch.batch_number,
         expiry_date: expiry_date || batch.expiry_date,
-        stock: stock !== undefined ? stock : batch.stock,
+        stock: nextStock,
       },
-      { transaction: t },
+      { transaction: t }
     );
 
     await t.commit();
+
+    if (nextStock !== prevStock) {
+      await recordStockLogSafe({
+        medicine_id: batch.medicine_id,
+        batch_id: batch.id,
+        admin_id: req.user?.id || null,
+        activity_type: "adjustment",
+        quantity: Math.abs(nextStock - prevStock),
+        stock_before: prevStock,
+        stock_after: nextStock,
+        notes: `Penyesuaian stok kloter ${batch.batch_number} (${prevStock} -> ${nextStock})`,
+      });
+    }
+
+    await recordActivityLog({
+      admin_id: req.user?.id,
+      action: "UPDATE_MEDICINE_BATCH",
+      description: `Admin memperbarui kloter ${batch.batch_number} (stok: ${prevStock} -> ${nextStock})`,
+      entity_type: "MedicineBatch",
+      entity_id: batch.id,
+      req,
+    });
+
+    checkAndNotifyInventoryAlerts(batch.medicine_id);
 
     return res.status(200).json({
       status: "success",

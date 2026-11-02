@@ -1,9 +1,16 @@
-﻿"use strict";
+"use strict";
 
 const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-  class DeliveryBatch extends Model {}
+  class DeliveryBatch extends Model {
+    static associate(models) {
+      this.hasMany(models.Shipping, {
+        foreignKey: "delivery_batch_id",
+        as: "shippings",
+      });
+    }
+  }
 
   DeliveryBatch.init(
     {

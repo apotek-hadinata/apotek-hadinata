@@ -1,4 +1,3 @@
-
 "use strict";
 
 const { Model } = require("sequelize");
@@ -19,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       payment_method: {
-        type: DataTypes.ENUM("QRIS"),
+        type: DataTypes.ENUM("QRIS", "COD", "CASH"),
         allowNull: false,
       },
       amount: {

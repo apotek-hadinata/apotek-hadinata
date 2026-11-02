@@ -3,7 +3,16 @@ const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-// Register
+const serializeUserSafe = (user) => ({
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  phone: user.phone,
+  address: user.address,
+  role: user.role,
+});
+
+// 1. Register
 exports.register = async (req, res, next) => {
   try {
     const { name, email, phone, password, address, role } = req.body;
@@ -16,31 +25,25 @@ exports.register = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
-      name,
-      email,
-      phone,
+      name: String(name).trim(),
+      email: String(email).trim().toLowerCase(),
+      phone: phone ? String(phone).trim() : null,
       password: hashedPassword,
-      address: address || null,
-      role: role || "user",
+      address: address ? String(address).trim() : null,
+      role: "user", // Keamanan: pendaftaran publik selalu berstatus 'user'
     });
 
     return res.status(201).json({
       status: "success",
       message: "Registrasi berhasil! Silakan masuk ke akun Anda",
-      user: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        phone: newUser.phone,
-        role: newUser.role,
-      },
+      user: serializeUserSafe(newUser),
     });
   } catch (error) {
     next(error);
   }
 };
 
-// Login
+// 2. Login
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -56,8 +59,8 @@ exports.login = async (req, res, next) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role }, 
-      process.env.JWT_SECRET, 
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
     );
 
@@ -65,20 +68,14 @@ exports.login = async (req, res, next) => {
       status: "success",
       message: "Login berhasil",
       token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-      },
+      user: serializeUserSafe(user),
     });
   } catch (error) {
     next(error);
   }
 };
 
-//Get Profile
+// 3. Get Profile
 exports.getProfile = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -93,14 +90,14 @@ exports.getProfile = async (req, res, next) => {
 
     return res.status(200).json({
       status: "success",
-      user,
+      user: serializeUserSafe(user),
     });
   } catch (error) {
     next(error);
   }
 };
 
-// Update Profile
+// 4. Update Profile (Nama, Nomor Telepon, Alamat Pengiriman Utama)
 exports.updateProfile = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -111,23 +108,58 @@ exports.updateProfile = async (req, res, next) => {
       return res.status(404).json({ message: "Pengguna tidak ditemukan" });
     }
 
-    // Eksekusi update data (jika field kosong, tetap pakai data lama di DB)
     await user.update({
-      name: name || user.name,
-      phone: phone || user.phone,
-      address: address || user.address,
+      name: name !== undefined && String(name).trim() !== "" ? String(name).trim() : user.name,
+      phone: phone !== undefined ? String(phone).trim() : user.phone,
+      address: address !== undefined ? String(address).trim() : user.address,
     });
 
     return res.status(200).json({
       status: "success",
       message: "Profil Anda berhasil diperbarui",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        address: user.address,
-      },
+      user: serializeUserSafe(user),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 5. Change Password (Keamanan Akun)
+exports.changePassword = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { current_password, new_password } = req.body;
+
+    if (!current_password || !new_password) {
+      return res.status(400).json({
+        message: "Password saat ini dan password baru wajib diisi.",
+      });
+    }
+
+    if (String(new_password).length < 6) {
+      return res.status(400).json({
+        message: "Password baru minimal terdiri dari 6 karakter.",
+      });
+    }
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Pengguna tidak ditemukan" });
+    }
+
+    const isMatch = await bcrypt.compare(String(current_password), user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        message: "Password saat ini tidak sesuai.",
+      });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(String(new_password), 10);
+    await user.update({ password: hashedNewPassword });
+
+    return res.status(200).json({
+      status: "success",
+      message: "Password akun Anda berhasil diperbarui.",
     });
   } catch (error) {
     next(error);

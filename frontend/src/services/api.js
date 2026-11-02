@@ -19,8 +19,9 @@ export const removeUser = () => localStorage.removeItem("apotek_user");
 
 async function request(endpoint, options = {}) {
   const token = getToken();
+  const isFormData = options.body instanceof FormData;
   const headers = {
-    "Content-Type": "application/json",
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...(options.headers || {}),
   };
 
@@ -49,6 +50,7 @@ export const api = {
   login: (body) => request("/auth/login", { method: "POST", body: JSON.stringify(body) }),
   getProfile: () => request("/auth/profile"),
   updateProfile: (body) => request("/auth/profile", { method: "PUT", body: JSON.stringify(body) }),
+  changePassword: (body) => request("/auth/password", { method: "PUT", body: JSON.stringify(body) }),
 
   // Categories
   getCategories: () => request("/categories"),
@@ -57,16 +59,22 @@ export const api = {
   updateCategory: (id, body) => request(`/categories/${id}`, { method: "PUT", body: JSON.stringify(body) }),
   deleteCategory: (id) => request(`/categories/${id}`, { method: "DELETE" }),
 
-  // Medicines & Batches
+  // Medicines, Image Upload & FEFO Batches / Stock Logs
   getMedicines: (params = {}) => {
     const query = new URLSearchParams(params).toString();
     return request(`/medicines${query ? `?${query}` : ""}`);
   },
   getMedicineById: (id) => request(`/medicines/${id}`),
+  uploadMedicineImage: (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    return request("/medicines/upload-image", { method: "POST", body: formData });
+  },
   createMedicine: (body) => request("/medicines", { method: "POST", body: JSON.stringify(body) }),
   updateMedicine: (id, body) => request(`/medicines/${id}`, { method: "PUT", body: JSON.stringify(body) }),
   deleteMedicine: (id) => request(`/medicines/${id}`, { method: "DELETE" }),
 
+  getStockLogs: () => request("/medicines/stock-logs"),
   addMedicineBatch: (body) => request("/medicines/batches", { method: "POST", body: JSON.stringify(body) }),
   updateMedicineBatch: (batchId, body) => request(`/medicines/batches/${batchId}`, { method: "PUT", body: JSON.stringify(body) }),
   deleteMedicineBatch: (batchId) => request(`/medicines/batches/${batchId}`, { method: "DELETE" }),
@@ -78,18 +86,63 @@ export const api = {
   removeFromCart: (id) => request(`/cart/${id}`, { method: "DELETE" }),
   clearCart: () => request("/cart", { method: "DELETE" }),
 
-  // Orders
+  // Orders & Midtrans Verification
   checkoutOnline: (body) => request("/checkout/online", { method: "POST", body: JSON.stringify(body) }),
+  checkoutOffline: (body) => request("/checkout/offline", { method: "POST", body: JSON.stringify(body) }),
   getMyOrders: () => request("/orders/my-history"),
   getAllOrders: () => request("/orders"),
   getOrderById: (id) => request(`/orders/${id}`),
-  updateOrderStatus: (id, order_status) => request(`/orders/${id}/status`, { method: "PUT", body: JSON.stringify({ order_status }) }),
+  verifyOrderPayment: (id, simulate_sandbox = false) =>
+    request(`/orders/${id}/verify-payment`, {
+      method: "POST",
+      body: JSON.stringify({ simulate_sandbox }),
+    }),
+  updateOrderStatus: (id, order_status, payment_status) =>
+    request(`/orders/${id}/status`, {
+      method: "PUT",
+      body: JSON.stringify(payment_status ? { order_status, payment_status } : { order_status }),
+    }),
+  cancelMyOrder: (id, cancel_reason) =>
+    request(`/orders/${id}/cancel`, {
+      method: "POST",
+      body: JSON.stringify({ cancel_reason }),
+    }),
 
-  // Shipping
+  // Shipping & Delivery Batches
   getAvailableJobs: () => request("/shipping/jobs"),
   getMyShipments: () => request("/shipping/my-shipments"),
   pickupShipping: (id) => request(`/shipping/${id}/pickup`, { method: "PUT" }),
   updateShippingStatus: (id, shipping_status) => request(`/shipping/${id}/status`, { method: "PUT", body: JSON.stringify({ shipping_status }) }),
+  getDeliveryBatches: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/shipping/batches${query ? `?${query}` : ""}`);
+  },
+
+  // Address Book (CustomerAddresses)
+  getMyAddresses: () => request("/addresses"),
+  createAddress: (body) => request("/addresses", { method: "POST", body: JSON.stringify(body) }),
+  updateAddress: (id, body) => request(`/addresses/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  setDefaultAddress: (id) => request(`/addresses/${id}/default`, { method: "PUT" }),
+  deleteAddress: (id) => request(`/addresses/${id}`, { method: "DELETE" }),
+
+  // Dynamic Pharmacy Settings (SystemSettings)
+  getPublicSettings: () => request("/settings/public"),
+  getAllSettingsAdmin: () => request("/settings"),
+  updateSettingAdmin: (key, body) => request(`/settings/${key}`, { method: "PUT", body: JSON.stringify(body) }),
+
+  // User & Staff Management (Users)
+  getAllUsers: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/users${query ? `?${query}` : ""}`);
+  },
+  createUserByAdmin: (body) => request("/users", { method: "POST", body: JSON.stringify(body) }),
+  updateUserRole: (id, role) => request(`/users/${id}/role`, { method: "PUT", body: JSON.stringify({ role }) }),
+
+  // Activity Logs Audit Trail (ActivityLogs)
+  getActivityLogs: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/activity-logs${query ? `?${query}` : ""}`);
+  },
 
   // Chat
   sendMessage: (body) => request("/chats/message", { method: "POST", body: JSON.stringify(body) }),

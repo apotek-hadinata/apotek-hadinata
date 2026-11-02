@@ -5,25 +5,26 @@ import {
   Plus, 
   Edit, 
   Trash2, 
-  Calendar, 
-  Clock, 
   AlertTriangle, 
   CheckCircle2, 
-  Search, 
   Pill, 
   X, 
   ArrowLeft,
   ShieldAlert,
-  ShieldCheck,
   Tag,
-  Boxes
+  Boxes,
+  Upload,
+  Download,
+  History
 } from "lucide-react";
 
 export const AdminMedicines = ({ onBack }) => {
-  const [activeTab, setActiveTab] = useState("medicines"); // 'medicines' | 'categories' | 'fefo_audit'
+  const [activeTab, setActiveTab] = useState("medicines"); // 'medicines' | 'categories' | 'fefo_audit' | 'stock_logs'
   const [medicines, setMedicines] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [stockLogs, setStockLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [notification, setNotification] = useState({ type: "", message: "" });
@@ -63,12 +64,14 @@ export const AdminMedicines = ({ onBack }) => {
   const loadAll = async () => {
     try {
       setLoading(true);
-      const [medRes, catRes] = await Promise.all([
+      const [medRes, catRes, logRes] = await Promise.allSettled([
         api.getMedicines(),
-        api.getCategories()
+        api.getCategories(),
+        api.getStockLogs(),
       ]);
-      if (medRes?.data) setMedicines(medRes.data);
-      if (catRes?.data) setCategories(catRes.data);
+      if (medRes.status === "fulfilled" && medRes.value?.data) setMedicines(medRes.value.data);
+      if (catRes.status === "fulfilled" && catRes.value?.data) setCategories(catRes.value.data);
+      if (logRes.status === "fulfilled" && Array.isArray(logRes.value?.data)) setStockLogs(logRes.value.data);
     } catch (err) {
       notify("error", err.message || "Gagal memuat data master");
     } finally {
@@ -133,6 +136,56 @@ export const AdminMedicines = ({ onBack }) => {
       image: med.image || ""
     });
     setIsMedModalOpen(true);
+  };
+
+  const handleImageFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploadingImage(true);
+      const res = await api.uploadMedicineImage(file);
+      if (res?.imageUrl) {
+        setMedForm((prev) => ({ ...prev, image: res.imageUrl }));
+        notify("success", "Foto produk obat berhasil diunggah.");
+      }
+    } catch (err) {
+      alert(err.message || "Gagal mengunggah foto obat");
+    } finally {
+      setUploadingImage(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleExportStockLogsCsv = () => {
+    if (stockLogs.length === 0) {
+      alert("Belum ada catatan mutasi stok FEFO untuk diunduh.");
+      return;
+    }
+    const headers = ["Waktu", "SKU", "Nama Obat", "Nomor Batch", "Kedaluwarsa", "Tipe Mutasi", "Qty", "Stok Awal", "Stok Akhir", "Keterangan"];
+    const rows = stockLogs.map((l) => [
+      l.createdAt ? new Date(l.createdAt).toLocaleString("id-ID") : "-",
+      l.Medicine?.SKU_code || "-",
+      l.Medicine?.name || "-",
+      l.MedicineBatch?.batch_number || "-",
+      l.MedicineBatch?.expiry_date || "-",
+      l.activity_type,
+      l.quantity,
+      l.stock_before,
+      l.stock_after,
+      (l.notes || "").replace(/"/g, '""'),
+    ]);
+    const csvContent =
+      "\uFEFF" +
+      [headers, ...rows]
+        .map((r) => r.map((v) => `"${v}"`).join(","))
+        .join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `audit-mutasi-fefo-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   const handleSaveMedicine = async (e) => {
@@ -312,6 +365,11 @@ export const AdminMedicines = ({ onBack }) => {
               <Plus size={16} /> Tambah Kategori
             </button>
           )}
+          {activeTab === "stock_logs" && (
+            <button className="btn btn-secondary" onClick={handleExportStockLogsCsv}>
+              <Download size={16} /> Export CSV Audit FEFO
+            </button>
+          )}
         </div>
       </div>
 
@@ -323,27 +381,34 @@ export const AdminMedicines = ({ onBack }) => {
       )}
 
       {/* Sub Tabs */}
-      <div className="auth-tabs" style={{ maxWidth: "560px", marginBottom: "20px" }}>
+      <div className="auth-tabs" style={{ maxWidth: "780px", marginBottom: "20px", flexWrap: "wrap" }}>
         <button 
           className={`auth-tab-btn ${activeTab === "medicines" ? "active" : ""}`}
           onClick={() => setActiveTab("medicines")}
         >
-          <Layers size={15} style={{ display: "inline", verticalAlign: "middle", marginRight: "6px" }} />
+          <Layers size={15} />
           Katalog Obat ({medicines.length})
         </button>
         <button 
           className={`auth-tab-btn ${activeTab === "categories" ? "active" : ""}`}
           onClick={() => setActiveTab("categories")}
         >
-          <Tag size={15} style={{ display: "inline", verticalAlign: "middle", marginRight: "6px" }} />
+          <Tag size={15} />
           Kategori ({categories.length})
         </button>
         <button 
           className={`auth-tab-btn ${activeTab === "fefo_audit" ? "active" : ""}`}
           onClick={() => setActiveTab("fefo_audit")}
         >
-          <ShieldAlert size={15} style={{ display: "inline", verticalAlign: "middle", marginRight: "6px" }} />
-          Audit Kedaluwarsa FEFO ({allBatches.length})
+          <ShieldAlert size={15} />
+          Urutan FEFO ({allBatches.length})
+        </button>
+        <button 
+          className={`auth-tab-btn ${activeTab === "stock_logs" ? "active" : ""}`}
+          onClick={() => setActiveTab("stock_logs")}
+        >
+          <History size={15} />
+          Log Mutasi FEFO ({stockLogs.length})
         </button>
       </div>
 
@@ -408,21 +473,28 @@ export const AdminMedicines = ({ onBack }) => {
                         <td>
                           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                             <div style={{ 
-                              width: "36px", 
-                              height: "36px", 
+                              width: "38px", 
+                              height: "38px", 
                               borderRadius: "var(--radius-sm)", 
                               background: "var(--color-bg)", 
                               display: "flex", 
                               alignItems: "center", 
                               justifyContent: "center",
-                              border: "1px solid var(--color-border)"
+                              border: "1px solid var(--color-border)",
+                              overflow: "hidden",
+                              flexShrink: 0
                             }}>
-                              <Pill size={18} color="var(--color-primary)" />
+                              {med.image ? (
+                                <img src={med.image} alt={med.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                              ) : (
+                                <Pill size={18} color="var(--color-primary)" />
+                              )}
                             </div>
                             <div>
                               <strong>{med.name}</strong>
-                              <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
-                                {med.status === "in stock" ? "🟢 Aktif" : "🔴 Nonaktif"}
+                              <div style={{ fontSize: "0.74rem", color: "var(--color-text-muted)", display: "flex", alignItems: "center", gap: "5px", marginTop: "2px" }}>
+                                <span className={`status-dot ${med.status === "in stock" ? "status-dot-active" : "status-dot-inactive"}`} />
+                                <span>{med.status === "in stock" ? "Aktif" : "Nonaktif"}</span>
                               </div>
                             </div>
                           </div>
@@ -436,7 +508,7 @@ export const AdminMedicines = ({ onBack }) => {
                         <td><strong>Rp {Number(med.price).toLocaleString("id-ID")}</strong></td>
                         <td>
                           <span style={{ 
-                            fontWeight: 800, 
+                            fontWeight: 700, 
                             color: totalStock > 0 ? "var(--color-primary)" : "var(--color-danger)" 
                           }}>
                             {totalStock} unit
@@ -456,8 +528,8 @@ export const AdminMedicines = ({ onBack }) => {
                               </div>
                             </div>
                           ) : (
-                            <span style={{ fontSize: "0.75rem", color: "var(--color-danger)" }}>
-                              ⚠️ Belum ada batch
+                            <span className="badge badge-danger">
+                              Belum ada batch
                             </span>
                           )}
                         </td>
@@ -552,7 +624,7 @@ export const AdminMedicines = ({ onBack }) => {
       {/* TAB 3: FEFO AUDIT MONITORING */}
       {activeTab === "fefo_audit" && (
         <div>
-          <div className="card" style={{ marginBottom: "16px", background: "#f8fafc" }}>
+          <div className="card" style={{ marginBottom: "16px", background: "var(--color-bg)" }}>
             <h3 style={{ fontSize: "1rem", color: "var(--color-text-main)", marginBottom: "4px" }}>
               Prinsip Audit First Expire First Out (FEFO)
             </h3>
@@ -587,15 +659,15 @@ export const AdminMedicines = ({ onBack }) => {
                       <tr key={b.id}>
                         <td>
                           <span style={{ 
-                            fontSize: "0.75rem", 
-                            fontWeight: 800, 
-                            padding: "3px 8px", 
-                            borderRadius: "999px",
-                            background: idx === 0 ? "#ecfdf5" : "var(--color-bg)",
+                            fontSize: "0.74rem", 
+                            fontWeight: 700, 
+                            padding: "2px 8px", 
+                            borderRadius: "var(--radius-sm)",
+                            background: idx === 0 ? "var(--color-primary-light)" : "var(--color-bg)",
                             color: idx === 0 ? "var(--color-primary)" : "var(--color-text-muted)",
-                            border: "1px solid var(--color-border)"
+                            border: `1px solid ${idx === 0 ? "var(--color-primary-border)" : "var(--color-border)"}`
                           }}>
-                            {idx === 0 ? "⭐ Antrean #1" : `#${idx + 1}`}
+                            {idx === 0 ? "Prioritas #1" : `#${idx + 1}`}
                           </span>
                         </td>
                         <td>
@@ -613,6 +685,106 @@ export const AdminMedicines = ({ onBack }) => {
                           <span className={`expiry-tag ${st.cls}`}>
                             {st.label}
                           </span>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 4: FEFO STOCK MUTATION AUDIT LOGS */}
+      {activeTab === "stock_logs" && (
+        <div>
+          <div className="card" style={{ marginBottom: "16px", background: "var(--color-bg)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
+            <div>
+              <h3 style={{ fontSize: "1rem", color: "var(--color-text-main)", marginBottom: "4px" }}>
+                Jejak Audit Mutasi & Pemotongan Kloter FEFO (StockLogs)
+              </h3>
+              <p style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>
+                Merekam otomatis setiap penambahan kloter baru, pemotongan batch FEFO saat checkout online maupun kasir POS, serta pengembalian stok pesanan batal.
+              </p>
+            </div>
+          </div>
+
+          <div className="table-container">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Waktu</th>
+                  <th>Nama Obat & SKU</th>
+                  <th>Kloter Batch</th>
+                  <th>Tipe Aktivitas</th>
+                  <th>Perubahan Stok</th>
+                  <th>Keterangan Audit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {stockLogs.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ textAlign: "center", padding: "36px", color: "var(--color-text-muted)" }}>
+                      Belum ada riwayat mutasi stok tercatat.
+                    </td>
+                  </tr>
+                ) : (
+                  stockLogs.map((log) => {
+                    const typeMap = {
+                      stock_in: { label: "STOK MASUK", cls: "badge-user" },
+                      stock_out: { label: "KELUAR (FEFO)", cls: "badge-danger" },
+                      adjustment: { label: "PENYESUAIAN", cls: "badge-admin" },
+                      release_reservation: { label: "PENGEMBALIAN", cls: "badge-kurir" },
+                      reservation: { label: "RESERVASI", cls: "badge-admin" },
+                    };
+                    const badgeInfo = typeMap[log.activity_type] || { label: log.activity_type, cls: "" };
+
+                    return (
+                      <tr key={log.id}>
+                        <td style={{ whiteSpace: "nowrap", fontSize: "0.78rem", color: "var(--color-text-muted)" }}>
+                          {log.createdAt
+                            ? new Date(log.createdAt).toLocaleString("id-ID", {
+                                day: "2-digit",
+                                month: "short",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })
+                            : "-"}
+                        </td>
+                        <td>
+                          <strong>{log.Medicine?.name || `Obat #${log.medicine_id}`}</strong>
+                          {log.Medicine?.SKU_code && (
+                            <div style={{ fontSize: "0.72rem", color: "var(--color-text-muted)" }}>
+                              <code>{log.Medicine.SKU_code}</code>
+                            </div>
+                          )}
+                        </td>
+                        <td>
+                          {log.MedicineBatch ? (
+                            <>
+                              <code>{log.MedicineBatch.batch_number}</code>
+                              <div style={{ fontSize: "0.7rem", color: "var(--color-text-muted)" }}>
+                                ED: {log.MedicineBatch.expiry_date}
+                              </div>
+                            </>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+                        <td>
+                          <span className={`badge ${badgeInfo.cls}`}>{badgeInfo.label}</span>
+                        </td>
+                        <td style={{ whiteSpace: "nowrap" }}>
+                          <span style={{ color: "var(--color-text-muted)" }}>{log.stock_before}</span>
+                          {" -> "}
+                          <strong>{log.stock_after}</strong>{" "}
+                          <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                            ({log.activity_type === "stock_out" ? `-${log.quantity}` : `+${log.quantity}`})
+                          </span>
+                        </td>
+                        <td style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>
+                          {log.notes || "-"}
                         </td>
                       </tr>
                     );
@@ -709,6 +881,53 @@ export const AdminMedicines = ({ onBack }) => {
                 </div>
 
                 <div className="form-group">
+                  <label className="form-label">Foto Produk Obat (Upload File atau URL)</label>
+                  <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
+                    <label
+                      className="btn btn-secondary btn-sm"
+                      style={{ cursor: uploadingImage ? "wait" : "pointer", margin: 0 }}
+                    >
+                      <Upload size={14} />
+                      <span>{uploadingImage ? "Mengunggah..." : "Pilih File Foto"}</span>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        onChange={handleImageFileUpload}
+                        disabled={uploadingImage}
+                        style={{ display: "none" }}
+                      />
+                    </label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      style={{ flex: 1, minWidth: "180px" }}
+                      placeholder="Atau tempel URL gambar (opsional)..."
+                      value={medForm.image}
+                      onChange={(e) => setMedForm({ ...medForm, image: e.target.value })}
+                    />
+                  </div>
+                  {medForm.image && (
+                    <div style={{ marginTop: "8px", display: "flex", alignItems: "center", gap: "10px", background: "var(--color-bg)", padding: "8px 10px", borderRadius: "var(--radius-sm)", border: "1px solid var(--color-border)" }}>
+                      <img
+                        src={medForm.image}
+                        alt="Preview Obat"
+                        style={{ width: "44px", height: "44px", objectFit: "cover", borderRadius: "var(--radius-xs)", background: "#fff" }}
+                      />
+                      <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {medForm.image}
+                      </span>
+                      <button
+                        type="button"
+                        className="btn btn-secondary btn-sm"
+                        onClick={() => setMedForm({ ...medForm, image: "" })}
+                      >
+                        Hapus Foto
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="form-group">
                   <label className="form-label">Deskripsi & Aturan Pakai</label>
                   <textarea
                     rows={3}
@@ -744,7 +963,7 @@ export const AdminMedicines = ({ onBack }) => {
             <div className="modal-header">
               <div>
                 <h3 style={{ fontSize: "1.1rem" }}>
-                  📦 Manajemen Kloter Batch FEFO
+                  Manajemen Kloter Batch FEFO
                 </h3>
                 <span style={{ fontSize: "0.85rem", color: "var(--color-primary)", fontWeight: 700 }}>
                   {selectedMedForBatch.name}
@@ -760,7 +979,7 @@ export const AdminMedicines = ({ onBack }) => {
 
             <div className="modal-body">
               {/* Form Tambah Batch Baru */}
-              <div className="card" style={{ background: "#f8fafc", padding: "16px", marginBottom: "20px" }}>
+              <div className="card" style={{ background: "var(--color-bg)", padding: "16px", marginBottom: "20px" }}>
                 <h4 style={{ fontSize: "0.9rem", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
                   <Plus size={16} /> Tambah Kloter Stok Baru
                 </h4>
@@ -840,14 +1059,15 @@ export const AdminMedicines = ({ onBack }) => {
                             <tr key={b.id}>
                               <td>
                                 <span style={{ 
-                                  fontSize: "0.7rem", 
-                                  fontWeight: 800, 
-                                  padding: "2px 6px", 
-                                  borderRadius: "999px",
-                                  background: idx === 0 ? "#ecfdf5" : "var(--color-bg)",
-                                  color: idx === 0 ? "var(--color-primary)" : "var(--color-text-muted)"
+                                  fontSize: "0.72rem", 
+                                  fontWeight: 700, 
+                                  padding: "2px 7px", 
+                                  borderRadius: "var(--radius-sm)",
+                                  background: idx === 0 ? "var(--color-primary-light)" : "var(--color-bg)",
+                                  color: idx === 0 ? "var(--color-primary)" : "var(--color-text-muted)",
+                                  border: `1px solid ${idx === 0 ? "var(--color-primary-border)" : "var(--color-border)"}`
                                 }}>
-                                  {idx === 0 ? "⭐ Prioritas #1" : `Antrean #${idx + 1}`}
+                                  {idx === 0 ? "Prioritas #1" : `Antrean #${idx + 1}`}
                                 </span>
                               </td>
                               <td><code>{b.batch_number}</code></td>

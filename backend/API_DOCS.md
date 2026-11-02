@@ -1124,3 +1124,104 @@ Mengubah semua status notifikasi belum terbaca (`is_read: false`) milik user saa
       "message": "Notifikasi berhasil dihapus"
     }
     ```
+
+
+---
+
+## 10. Endpoint Operasional Tambahan (Upload Media, Audit FEFO & Verifikasi Pembayaran Lokal)
+
+### Upload Foto Kemasan Obat
+Mengunggah file gambar kemasan obat langsung ke penyimpanan server (`uploads/medicines/`) menggunakan `multipart/form-data`.
+
+-   **URL:** `/medicines/upload-image`
+-   **Method:** `POST`
+-   **Akses:** Terautentikasi (Admin)
+-   **Form Data:** Field `image` (format `JPG`, `PNG`, `WEBP`, atau `GIF`, ukuran maksimal `4 MB`).
+-   **Response Sukses (201 Created):**
+    ```json
+    {
+      "status": "success",
+      "message": "Foto kemasan obat berhasil diunggah",
+      "image_url": "http://localhost:3000/uploads/medicines/med-1793389000000-123456.png",
+      "relative_path": "/uploads/medicines/med-1793389000000-123456.png"
+    }
+    ```
+
+---
+
+### Mengambil Log Audit Mutasi Stok FEFO (`StockLogs`)
+Mendapatkan histori keluar-masuk dan penyesuaian stok per kloter batch obat (`stock_in`, `stock_out`, `adjustment`, `release_reservation`).
+
+-   **URL:** `/medicines/stock-logs`
+-   **Method:** `GET`
+-   **Akses:** Terautentikasi (Admin)
+-   **Query Params (Opsional):** `?limit=100&activity_type=stock_out`
+-   **Response Sukses (200 OK):**
+    ```json
+    {
+      "status": "success",
+      "data": [
+        {
+          "id": 18,
+          "medicine_id": 1,
+          "batch_id": 2,
+          "admin_id": 1,
+          "activity_type": "stock_out",
+          "quantity": 2,
+          "stock_before": 25,
+          "stock_after": 23,
+          "notes": "Pemotongan otomatis FEFO Pesanan Online #14 — Kloter B-001A",
+          "createdAt": "2026-10-31T03:20:00.000Z"
+        }
+      ]
+    }
+    ```
+
+---
+
+### Verifikasi Status Pembayaran Midtrans Lokal (Tanpa Webhook `ngrok`)
+Mengecek status pembayaran pesanan secara langsung ke Midtrans Transaction Status API (serta mendukung mode `simulate_sandbox: true` di lingkungan non-produksi untuk keperluan pengujian lokal/presentasi).
+
+-   **URL:** `/orders/:id/verify-payment`
+-   **Method:** `POST`
+-   **Akses:** Terautentikasi (Pemilik Pesanan / Admin)
+-   **Request Body (Opsional):**
+    ```json
+    {
+      "simulate_sandbox": false
+    }
+    ```
+-   **Response Sukses (200 OK):**
+    ```json
+    {
+      "status": "success",
+      "payment_status": "paid",
+      "order_status": "processing",
+      "midtrans_status": "settlement",
+      "message": "Pembayaran terverifikasi LUNAS! Pesanan otomatis diteruskan ke antrean pengiriman."
+    }
+    ```
+
+
+---
+
+### Mengubah Password Akun Pengguna
+Memperbarui password akun yang sedang login dengan verifikasi `current_password`.
+
+-   **URL:** `/auth/password`
+-   **Method:** `PUT`
+-   **Akses:** Terautentikasi (Semua Peran)
+-   **Request Body:**
+    ```json
+    {
+      "current_password": "password123",
+      "new_password": "passwordBaru456"
+    }
+    ```
+-   **Response Sukses (200 OK):**
+    ```json
+    {
+      "status": "success",
+      "message": "Password akun Anda berhasil diperbarui."
+    }
+    ```

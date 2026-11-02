@@ -1,5 +1,16 @@
 "use strict";
-const { ChatRoom, ChatMessage, User, sequelize } = require("../models");
+const { Op } = require("sequelize");
+const { ChatRoom, ChatMessage, User, Notification, sequelize } = require("../models");
+
+const createSafeNotifications = async (records) => {
+  try {
+    if (Array.isArray(records) && records.length > 0) {
+      await Notification.bulkCreate(records);
+    }
+  } catch (err) {
+    console.warn("Chat notification warning:", err.message);
+  }
+};
 
 // 1. Mengirim Pesan (Pembeli ke Admin ATAU Admin ke Pembeli)
 exports.sendMessage = async (req, res, next) => {
@@ -7,39 +18,92 @@ exports.sendMessage = async (req, res, next) => {
   try {
     const senderId = req.user.id;
     const senderRole = req.user.role;
-    const { message, chat_room_id } = req.body;
+    const { message, chat_room_id, room_id } = req.body;
 
-    let targetRoomId = chat_room_id;
+    if (!message || !String(message).trim()) {
+      await t.rollback();
+      return res.status(400).json({ message: "Isi pesan tidak boleh kosong" });
+    }
 
-    // Jika pengirim adalah pembeli (user) biasa, otomatis cari atau buat room miliknya sendiri
+    let targetRoomId = room_id || chat_room_id;
+    let roomInstance = null;
+
     if (senderRole === "user") {
       const [room] = await ChatRoom.findOrCreate({
         where: { user_id: senderId },
-        defaults: { last_message: message },
+        defaults: { user_id: senderId },
         transaction: t,
       });
       targetRoomId = room.id;
+      roomInstance = room;
+    } else {
+      if (!targetRoomId) {
+        await t.rollback();
+        return res.status(400).json({ message: "ID Room Chat pelanggan wajib disertakan" });
+      }
+      roomInstance = await ChatRoom.findByPk(targetRoomId, { transaction: t });
+      if (!roomInstance) {
+        await t.rollback();
+        return res.status(404).json({ message: "Room chat pelanggan tidak ditemukan" });
+      }
     }
 
-    // Buat data pesan baru di tabel ChatMessages
+    const cleanMessage = String(message).trim();
+
     const newMessage = await ChatMessage.create(
       {
-        chat_room_id: targetRoomId,
+        room_id: targetRoomId,
         sender_id: senderId,
-        message,
+        message: cleanMessage,
+        is_read: false,
       },
-      { transaction: t },
+      { transaction: t }
     );
 
-    // Update kolom 'last_message' di tabel ChatRoom untuk kebutuhan scannability sidebar chat
-    await ChatRoom.update({ last_message: message }, { where: { id: targetRoomId }, transaction: t });
+    // Sentuh updatedAt pada ChatRoom agar naik ke urutan teratas daftar percakapan
+    roomInstance.changed("updatedAt", true);
+    await roomInstance.save({ transaction: t });
+
+    const fullMessage = await ChatMessage.findByPk(newMessage.id, {
+      include: [{ model: User, attributes: ["id", "name", "role"] }],
+      transaction: t,
+    });
+
+    const senderUser = await User.findByPk(senderId, {
+      attributes: ["id", "name", "role"],
+      transaction: t,
+    });
 
     await t.commit();
+
+    // Kirim notifikasi ke lawan bicara
+    if (senderRole === "user") {
+      const admins = await User.findAll({ where: { role: "admin" }, attributes: ["id"] });
+      await createSafeNotifications(
+        admins.map((adm) => ({
+          user_id: adm.id,
+          title: `Pesan Konsultasi dari ${senderUser?.name || "Pelanggan"}`,
+          message: cleanMessage.length > 90 ? `${cleanMessage.slice(0, 90)}...` : cleanMessage,
+          type: "chat",
+          chat_id: targetRoomId,
+        }))
+      );
+    } else if (roomInstance?.user_id) {
+      await createSafeNotifications([
+        {
+          user_id: roomInstance.user_id,
+          title: "Balasan Apoteker / CS Hadinata",
+          message: cleanMessage.length > 90 ? `${cleanMessage.slice(0, 90)}...` : cleanMessage,
+          type: "chat",
+          chat_id: targetRoomId,
+        },
+      ]);
+    }
 
     return res.status(201).json({
       status: "success",
       message: "Pesan berhasil dikirim",
-      data: newMessage,
+      data: fullMessage || newMessage,
     });
   } catch (error) {
     await t.rollback();
@@ -54,26 +118,39 @@ exports.getChatHistory = async (req, res, next) => {
     const senderRole = req.user.role;
     let targetRoomId = req.params.roomId;
 
-    // Jika yang mengakses adalah pembeli biasa, langsung arahkan ke room miliknya sendiri
     if (senderRole === "user") {
       const room = await ChatRoom.findOne({ where: { user_id: userId } });
-
-      // Jika pembeli belum pernah chat sama sekali, kembalikan array kosong dengan aman
       if (!room) {
-        return res.status(200).json({ status: "success", data: [] });
+        return res.status(200).json({ status: "success", room_id: null, data: [] });
       }
       targetRoomId = room.id;
     }
 
-    // Ambil semua pesan yang ada di room tersebut, diurutkan dari pesan terlama ke terbaru
+    if (!targetRoomId) {
+      return res.status(400).json({ message: "Room ID tidak ditemukan" });
+    }
+
+    // Tandai pesan dari lawan bicara sebagai sudah dibaca
+    await ChatMessage.update(
+      { is_read: true },
+      {
+        where: {
+          room_id: targetRoomId,
+          sender_id: { [Op.ne]: userId },
+          is_read: false,
+        },
+      }
+    );
+
     const messages = await ChatMessage.findAll({
-      where: { chat_room_id: targetRoomId },
+      where: { room_id: targetRoomId },
       include: [{ model: User, attributes: ["id", "name", "role"] }],
       order: [["createdAt", "ASC"]],
     });
 
     return res.status(200).json({
       status: "success",
+      room_id: Number(targetRoomId),
       data: messages,
     });
   } catch (error) {
@@ -82,17 +159,41 @@ exports.getChatHistory = async (req, res, next) => {
 };
 
 // 3. Mengambil Semua Daftar Room Chat Aktif (Sisi Dashboard Admin)
-// Digunakan admin untuk melihat list antrean pembeli mana saja yang sedang mengirim chat
 exports.getAdminChatRooms = async (req, res, next) => {
   try {
+    const adminId = req.user.id;
     const rooms = await ChatRoom.findAll({
-      include: [{ model: User, attributes: ["id", "name", "phone", "role"] }],
-      order: [["updatedAt", "DESC"]], // Room dengan pesan terbaru akan naik ke paling atas
+      include: [
+        { model: User, attributes: ["id", "name", "email", "phone", "role"] },
+        {
+          model: ChatMessage,
+          separate: true,
+          order: [["createdAt", "DESC"]],
+        },
+      ],
+      order: [["updatedAt", "DESC"]],
+    });
+
+    const formattedRooms = rooms.map((r) => {
+      const plain = r.toJSON();
+      const msgs = plain.ChatMessages || [];
+      const latest = msgs[0] || null;
+      const unreadCount = msgs.filter((m) => !m.is_read && m.sender_id !== adminId).length;
+      return {
+        id: plain.id,
+        user_id: plain.user_id,
+        User: plain.User,
+        last_message: latest?.message || "Belum ada pesan",
+        last_message_at: latest?.createdAt || plain.updatedAt,
+        unread_count: unreadCount,
+        total_messages: msgs.length,
+        updatedAt: plain.updatedAt,
+      };
     });
 
     return res.status(200).json({
       status: "success",
-      data: rooms,
+      data: formattedRooms,
     });
   } catch (error) {
     next(error);

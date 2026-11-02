@@ -1,4 +1,3 @@
-
 "use strict";
 
 const { Model } = require("sequelize");
@@ -31,6 +30,16 @@ module.exports = (sequelize, DataTypes) => {
 
       this.hasMany(models.Notification, {
         foreignKey: "user_id",
+      });
+
+      this.hasMany(models.CustomerAddress, {
+        foreignKey: "user_id",
+        as: "addresses",
+      });
+
+      this.hasMany(models.ActivityLog, {
+        foreignKey: "admin_id",
+        as: "activity_logs",
       });
     }
   }
