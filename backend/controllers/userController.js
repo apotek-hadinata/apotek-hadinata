@@ -1,5 +1,6 @@
 "use strict";
 
+const { Op } = require("sequelize");
 const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const { recordActivityLog } = require("../utils/activityLogger");
@@ -7,10 +8,14 @@ const { recordActivityLog } = require("../utils/activityLogger");
 // 1. Ambil Semua Pengguna (Filter Peran)
 exports.getAllUsers = async (req, res, next) => {
   try {
-    const { role } = req.query;
+    const { role, search } = req.query;
     const where = {};
     if (role) {
       where.role = role;
+    }
+    if (search && String(search).trim()) {
+      const keyword = `%${String(search).trim()}%`;
+      where[Op.or] = [{ name: { [Op.like]: keyword } }, { email: { [Op.like]: keyword } }];
     }
 
     const users = await User.findAll({

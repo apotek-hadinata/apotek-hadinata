@@ -115,7 +115,7 @@ export const api = {
   updateShippingStatus: (id, shipping_status) => request(`/shipping/${id}/status`, { method: "PUT", body: JSON.stringify({ shipping_status }) }),
   getDeliveryBatches: (params = {}) => {
     const query = new URLSearchParams(params).toString();
-    return request(`/shipping/batches${query ? `?${query}` : ""}`);
+    return request(`/shipping/delivery-batches${query ? `?${query}` : ""}`);
   },
 
   // Address Book (CustomerAddresses)
@@ -126,9 +126,9 @@ export const api = {
   deleteAddress: (id) => request(`/addresses/${id}`, { method: "DELETE" }),
 
   // Dynamic Pharmacy Settings (SystemSettings)
-  getPublicSettings: () => request("/settings/public"),
-  getAllSettingsAdmin: () => request("/settings"),
-  updateSettingAdmin: (key, body) => request(`/settings/${key}`, { method: "PUT", body: JSON.stringify(body) }),
+  getPublicSettings: () => request("/settings"),
+  getAllSettingsAdmin: () => request("/settings/admin"),
+  updateSettings: (settingsMap) => request("/settings", { method: "PUT", body: JSON.stringify(settingsMap) }),
 
   // User & Staff Management (Users)
   getAllUsers: (params = {}) => {

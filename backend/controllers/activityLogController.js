@@ -7,8 +7,13 @@ exports.getActivityLogs = async (req, res, next) => {
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 30));
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
     const offset = (page - 1) * limit;
+    const where = {};
+    if (req.query.action) {
+      where.action = String(req.query.action);
+    }
 
     const { count, rows } = await ActivityLog.findAndCountAll({
+      where,
       include: [
         {
           model: User,

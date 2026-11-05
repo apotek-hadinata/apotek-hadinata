@@ -11,13 +11,8 @@ import {
   Plus,
   RefreshCw,
   Search,
-  ShieldCheck,
   Building2,
-  Clock,
-  Phone,
-  MapPin,
   Coins,
-  KeyRound,
   ArrowLeft,
 } from "lucide-react";
 
@@ -60,8 +55,12 @@ export const AdminSettings = ({ onBack }) => {
     try {
       setSettingsLoading(true);
       const res = await api.getAllSettingsAdmin();
-      if (res?.data) {
-        setSettings(res.data);
+      if (Array.isArray(res?.data)) {
+        const map = {};
+        res.data.forEach((s) => {
+          map[s.setting_key] = s.setting_value;
+        });
+        setSettings(map);
       }
     } catch (err) {
       setSettingsFeedback({ type: "error", text: err.message || "Gagal memuat pengaturan apotek." });
@@ -145,11 +144,13 @@ export const AdminSettings = ({ onBack }) => {
         "free_shipping_min_order",
       ];
 
+      const payload = {};
       for (const key of keysToSave) {
         if (settings[key] !== undefined) {
-          await api.updateSettingAdmin(key, { setting_value: String(settings[key]) });
+          payload[key] = String(settings[key]);
         }
       }
+      await api.updateSettings(payload);
 
       setSettingsFeedback({
         type: "success",
@@ -616,12 +617,18 @@ export const AdminSettings = ({ onBack }) => {
               }}
             >
               <option value="">Semua Jenis Aksi</option>
-              <option value="SYSTEM_INITIALIZE">Inisialisasi Sistem</option>
               <option value="POS_OFFLINE_TRANSACTION">Transaksi POS Offline</option>
-              <option value="BATCH_INCOMING_STOCK">Penerimaan Kloter Obat</option>
               <option value="UPDATE_ORDER_STATUS">Perubahan Status Pesanan</option>
-              <option value="SETTING_UPDATED">Pembaruan Pengaturan</option>
-              <option value="CHANGE_USER_ROLE">Perubahan Peran Akun</option>
+              <option value="CREATE_MEDICINE">Tambah Obat</option>
+              <option value="UPDATE_MEDICINE">Ubah Data Obat</option>
+              <option value="DELETE_MEDICINE">Hapus Obat</option>
+              <option value="ADD_MEDICINE_BATCH">Penerimaan Kloter Obat</option>
+              <option value="UPDATE_MEDICINE_BATCH">Koreksi Kloter Obat</option>
+              <option value="DELETE_MEDICINE_BATCH">Hapus Kloter Obat</option>
+              <option value="UPDATE_SYSTEM_SETTINGS">Pembaruan Pengaturan</option>
+              <option value="CREATE_STAFF_ACCOUNT">Pendaftaran Akun Staf</option>
+              <option value="UPDATE_USER_ROLE">Perubahan Peran Akun</option>
+              <option value="SYSTEM_INITIALIZE">Inisialisasi Sistem</option>
             </select>
             <button className="btn btn-secondary btn-sm" onClick={fetchLogs}>
               <RefreshCw size={14} /> Filter & Segarkan
