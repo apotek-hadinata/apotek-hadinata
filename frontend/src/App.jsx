@@ -86,7 +86,10 @@ function AppContent() {
         onSearchSubmit={handleHeaderSearchSubmit}
       />
 
-      <main className="main-content">
+      <main
+        key={`${isAuthenticated ? "authenticated" : "guest"}-${role}`}
+        className="main-content animate-fade-in"
+      >
         {/* Auth Page View */}
         {currentTab === "auth" && !isAuthenticated && (
           <AuthPage

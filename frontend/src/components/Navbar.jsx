@@ -124,6 +124,11 @@ export const Navbar = ({
     if (next) loadNotifications();
   };
 
+  const handleLogout = () => {
+    onSelectTab("catalog");
+    logout();
+  };
+
   const handleClickNotifItem = async (notif) => {
     if (!notif.is_read) {
       try {
@@ -740,7 +745,7 @@ export const Navbar = ({
                     <div className="nav-item-wrapper">
                       <button
                         className="nav-icon-btn"
-                        onClick={logout}
+                        onClick={handleLogout}
                         aria-label="Keluar"
                         style={{ width: "34px", height: "34px", padding: 0 }}
                       >
